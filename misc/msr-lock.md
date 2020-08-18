@@ -1,84 +1,84 @@
-# Fixing CFG Lock
+# Arreglar CFG Lock
 
 
 
 
 
-Do note that this is only recommended for users who have already installed macOS, for users who are installing for the first time enable `AppleCpuPmCfgLock` and `AppleXcpmCfgLock` under `Kernel -> Quirks`
+Ten en cuenta que solo se recomienda hacer esto para usarios que ya han instalado macOS. Para usarios que están a instalar por la primera vez, activen `AppleCpuPmCfgLock` y `AppleXcpmCfgLock` en `Kernel -> Quirks`
 
-## What is CFG-Lock
+## ¿Qué es CFG-Lock?
 
-CFG-Lock is a setting in your BIOS that allows for a specific register(in this case the MSR 0xE2) to be written to. By default, most motherboards lock this variable with many even hiding the option outright in the GUI. And why we care about it is that macOS actually wants to write to this variable, and not just one part of macOS. Instead both the Kernel(XNU) and AppleIntelPowerManagement want this register.
+CFG-Lock es un ajuste en tu BIOS que allows for a specific register(en este caso el MSR 0xE2) to be written to. By default, most motherboards lock this variable with many even hiding the option outright en la GUI. Y la razón por la que nos importa esto es que macOS actually wants to write to this variable, and not just one part of macOS. Instead both el Kernel(XNU) y AppleIntelPowerManagement quieren acceder este registro.
 
-So to fix it we have 2 options:
+Para arreglarlo tenemos 2 opciones:
 
-1. Patch macOS to work with our hardware
+1. Parchear macOS para que funcione con nuestro hardware
 
-* This creates instability and unnecessary patching for many
-* The 2 patches we use for this:
-  * `AppleCpuPmCfgLock` for AppleIntelPowerManagement.kext
-  * `AppleXcpmCfgLock` for the Kernel(XNU)
+* Esto crea inestabilidad y unnecessary patching for many
+* Los 2 parches que usamos para esto:
+  * `AppleCpuPmCfgLock` para AppleIntelPowerManagement.kext
+  * `AppleXcpmCfgLock` para el Kernel(XNU)
 
-2. Patch our firmware to support MSR E2 write
+2. Parchear nuestro firmware para support MSR E2 write
 
 * Very much preferred, as avoids patching allowing for greater flexibility regarding stability and OS upgrades
   
-Note: Penyrn based machines actually don't need to worry about unlocking this register
+Note: Sistemas basados en Penyrn actually don't need to worry about desbloquear este registro
 
-## Disabling CFG Lock
+## Desactivar CFG Lock
 
-So you've installed macOS but you're using those pesky `CFG-Lock` patches that we want to get rid of, well to do this is fairly simple. You'll need the following:
+So you've installed macOS but you're using those pesky `CFG-Lock` patches that we want to get rid of, well to do this is fairly simple. Necesitarás lo seguiente:
 
-Inside your EFI/OC/Tools folder and config.plist:
+Dentro tu carpeta de EFI/OC/Tools y config.plist:
 
 * [VerifyMsrE2](https://github.com/acidanthera/OpenCorePkg/releases)
 * [Modified GRUB Shell](https://github.com/datasone/grub-mod-setup_var/releases)
 
-And some apps to help us out:
+Y unas apps para ayudarnos:
 
 * [UEFITool](https://github.com/LongSoft/UEFITool/releases) (Make sure it's UEFITool and not UEFIExtrac)
 * [Universal-IFR-Extractor](https://github.com/LongSoft/Universal-IFR-Extractor/releases)
 
-And don't forget to disable the following from your config.plist under `Kernel -> Quirks`:
+Y no olvides desactivar lo siguiente desde tu config.plist en `Kernel -> Quirks`:
 
 * `AppleCpuPmCfgLock`
 * `AppleXcpmCfgLock`
 
-And the final part, grabbing your BIOS from the vendors' website.
+And the final part, descargar tu BIOS desde el sitio del vendedor.
 
 Now the fun part!
 
-## Checking if CFG-Lock can be turned off
+## Checking si se puede desactivar CFG-Lock
 
-Boot OpenCore and select the `VerifyMsrE2` option in the picker. This tool will tell you whether your BIOS supports CFG-Lock and if it can be unlocked.
+Boot OpenCore y selecciona `VerifyMsrE2` en el picker. Esta herraminete te contrará si tu BIOS supports CFG-Lock y si puede ser desbloqueado.
 
-## Turning off CFG-Lock manually
+## Desactivar CFG-Lock manualmente
 
-1. Open your firmware with UEFITool and then find `CFG Lock` as a Unicode string. If nothing pops up then your firmware doesn't support `CFG Lock`, otherwise continue on.
+1. Abre tu firmware con UEFITool y luego buscar `CFG Lock` como a Unicode string. If nothing pops up then your firmware doesn't support `CFG Lock`, otherwise continue on.
 
 ![](../images/extras/msr-lock-md/uefi-tool.png)
 
 1. You'll find that this string is found within a Setup folder, right-click and export as `Setup.bin`
-2. Open your setup file with `ifrextract` and export as a .txt file with terminal:
+2. Open your setup file with `ifrextract` y exportar como un archivo .txt con la terminal:
 
    ```
-   path/to/ifrextract path/to/Setup.bin path/to/Setup.txt
+   dirreción/para/ifrextract dirección/para/Setup.bin dirección/para/Setup.txt
    ```
 
-3. Open the text file and search for `CFG Lock, VarStoreInfo (VarOffset/VarName):` and note the offset right after it(ie: `0x5A4`)
+3. Abre el archivo txt y busca `CFG Lock, VarStoreInfo (VarOffset/VarName):` y apunta el offset right after it(ie: `0x5A4`)
 
 ![](../images/extras/msr-lock-md/cfg-find.png)
 
-1. Run the Modified GRUB Shell and paste the following where `0x5A4` is replaced with your value:
+1. Corre la Modified GRUB Shell y pegar lo siguiente donde `0x5A4` es reemplazaddddo con tu value:
 
    ```
    setup_var 0x5A4 0x00
    ```
 
-   Do note that variable offsets are unique not just to each motherboard but even to its firmware version. **Never try to use an offset without checking.**
+   Do note that variable offsets are unique not just to each motherboard but even to its firmware version. **Nunca usen un offset sin revisar.**
 
 And you're done! Now you'll have correct CPU power management
 
-* **Note**: Every time you reset your BIOS you will need to flip this bit again, make sure to write it down with the BIOS version so you know which.
+* **Note**: Cada vez que reseteas tu BIOS you will need to flip this bit again, make sure to write it down with the BIOS version so you know which.
 
-* **Note 2**: Some OEMs like Lenovo may have the variable set but cannot unlock it without physically modding the BIOS, for these situations you may need to use a tool like [RU](http://ruexe.blogspot.com/): [CFG LOCK/Unlocking - Alternative method](https://www.reddit.com/r/hackintosh/comments/hz2rtm/cfg_lockunlocking_alternative_method/)
+* **Note 2**: Algunos OEMs como Lenovo talvez tienen el variable pusta pero no te dejan desbloquearlo sin modificar físicamente el BIOS, for these situations you may need to use una herramineta como [RU](http://ruexe.blogspot.com/): [CFG LOCK/Unlocking - Alternative method](https://www.reddit.com/r/hackintosh/comments/hz2rtm/cfg_lockunlocking_alternative_method/)
