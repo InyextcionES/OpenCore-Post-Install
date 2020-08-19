@@ -2,20 +2,20 @@
 
 
 
-Main thing this guide will go over:
+Principlamente esta guiía cubre:
 
 * [Configuarar la GUI de OpenCore](#configurar-la-gui-de-opencore)
 * [Configurar el sonido del arranque](#configurar-el-sonido-del-arranque-usando-audiodxe)
 
 ## Configurar la GUI de OpenCore
 
-So to get started, necesitamos OpenCore 0.5.7 o posterior dado que estas versiones tienen la GUI incluida con the rest of the files. Si aún usas una versión antigua, recomendamos que actualices: [Actualizar OpenCore](../universal/update.md)
+Para empezar, necesitamos OpenCore 0.5.7 o posterior dado que estas versiones tienen la GUI incluida con el resto de los archivos. Si aún usas una versión antigua, recomendamos que actualices: [Actualizar OpenCore](../universal/update.md)
 
-Once that's done, we'll need a couple things:
+Cuando lo hayas hecho, necestiaremos lo siguiente:
 
 * [Binary Resources](https://github.com/acidanthera/OcBinaryData)
 * [OpenCanopy.efi](https://github.com/acidanthera/OpenCorePkg/releases)
-  * Note: OpenCanopy.efi must be from the same build as your OpenCore files, as mismatched files can cause boot issues
+  * Nota: OpenCanopy.efi tiene que ser de la misma version que tus archivos de OpenCore, ya que versiones incompatibles pueden casuar problemas con el arranque
 
 Cuando hayas conseguido estos, los agregaremos a nuestra partición EFI:
 
@@ -33,13 +33,13 @@ Ahora en nuestra config.plist, tenemos 2 cosas que arreglar:
     * Se encuentran otros ajustes de PickerAttributes en [Configuration.pdf](https://github.com/acidanthera/OpenCorePkg/blob/master/Docs/Configuration.pdf)
 * `UEFI -> Drivers` y agrega OpenCanopy.efi
 
-Once all this is saved, you can reboot and be greeted with a true Mac-like GUI:
+Cuando guardes estos cambios, puedes reinicar la compu y encontrar una GUI re similar con la de los Macs:
 
 ![Credit to vit9696](../images/extras/gui-md/gui.png)
 
 ## Configurar el sonido del arranque usando AudioDxe
 
-So to start, we'll need a couple things:
+Para empezar, necesitamos unas cosas:
 
 * Onboard audio output
   * USB DACs no son compatibles
@@ -47,7 +47,7 @@ So to start, we'll need a couple things:
 * [AudioDxe](https://github.com/acidanthera/OpenCorePkg/releases) en EFI/OC/Drivers y UEFI -> Drivers
 * [Binary Resources](https://github.com/acidanthera/OcBinaryData)
   * Agrega la carpeta de Resources a EFI/OC, just like we did with the OpenCore GUI section
-  * For those running out of space, `OCEFIAudio_VoiceOver_Boot.wav` is all that's required for the Boot-Chime
+  * Para los que no tengan tanto espacio, `OCEFIAudio_VoiceOver_Boot.wav` es el único que se requiere para el  Boot-Chime
 * Debug versión de OpenCore con logging activado
   * Dirígete a [OpenCore Debugging](https://inyextciones.github.io/OpenCore-Install-Guide/troubleshooting/debug.html) para más información
 
@@ -60,11 +60,11 @@ So to start, we'll need a couple things:
 **Configurar UEFI -> Audio:**
 
 * **AudioCodec:**
-  * Codec address of Audio controller
-  * To find yours:
-    * Check [IORegistryExplorer](https://github.com/khronokernel/IORegistryClone/blob/master/ioreg-302.zip) -> HDEF -> AppleHDAController -> IOHDACodecDevice and see the `IOHDACodecAddress` property
+  * Codec address de tu controlador de audio
+  * Para encontrar la tuya:
+    * Abre [IORegistryExplorer](https://github.com/khronokernel/IORegistryClone/blob/master/ioreg-302.zip) -> HDEF -> AppleHDAController -> IOHDACodecDevice y busca `IOHDACodecAddress`
     * ex: `0x0`
-      * Can also check via terminal(Note if multiple show up, use the vendor ID to find the right device)l:
+      * También lo puedes encontrar usando la terminal(Note if multiple show up, usa el vendor ID para encontrar el dispositivo correcto)l:
 
  ```sh
  ioreg -rxn IOHDACodecDevice | grep VendorID   // List all possible devices

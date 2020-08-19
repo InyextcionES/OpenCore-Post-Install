@@ -1,26 +1,26 @@
-# Fixing Sleep
+# Arreglar Suspensión
 
 
 
-So to understand how to fix sleep issues in macOS, we need to first look at what contributes to sleep issues most of the time:
+Para entender cómo arreglar problemas de suspensión en macOS, primero tenemos que estudiar o quê pode causar problemas de suspensión most of the time:
 
 * Incorrectly managed devices(most commonly PCIe based devices)
 
 The reason for this is when devices get an S3 call(or S0 for wake), the driver needs to power down the devices and put into a low state mode(vice versa when waking). Problems arise when such devices don't cooperate with the drivers and the main offenders of these issues are:
 
-* USB Controllers and Devices
+* Controladors y Dispositivos USB
 * GPUs
-* Thunderbolt Controllers and Devices
-* NICs(Both Ethernet and Wifi)
-* NVMe Drives
+* Controladors y Dispositivos Thunderbolt
+* NICs(Ethernet y Wifi)
+* Discos NVMe
 
 And there are others that can cause sleep issues that aren't directly(or obviously) related to PCI/e:
  
 * CPU Power Management
-* Displays
+* Pantallas
 * NVRAM
 * RTC/System Clocks
-* IRQ Conflicts
+* Conflictos IRQ
 * Audio
 * SMBus
 * TSC
@@ -28,19 +28,19 @@ And there are others that can cause sleep issues that aren't directly(or obvious
 And something many people forget are over and under-clocks:
  
 * CPUs
-  * AVX often breaks iGPUs and hurt overall stability
-* Bad RAM(Both overclocks and mismatched RAM)
+  * AVX rompe las iGPUs de menudo y generalmente hacen daño a la estabilidad
+* RAM mala(Overclocks y RAM mixta)
   * Even bad/mismatched timings can cause serious issues
 * Factory GPU Overclocks
   * OEMs commonly push a card a bit too far with their custom VBIOS
-  * Generally these cards will have a physical switch, allowing you to choose a low power VBIOS
+  * Generalmente estas placas tiene un interruptor fisical, que te permite elegir una low power VBIOS
 
-## Preparations
+## Preparaciones
 
 
-**In macOS**:
+**En macOS**:
 
-Before we get in too deep, we'll want to first ready our system:
+Antes de que we get in too deep, queremos preparar nuestro sistema:
 
 ```
 sudo pmset autopoweroff 0 
@@ -51,12 +51,12 @@ sudo pmset proximitywake 0
 
 This will do 4 things for us:
 
-1. Disables autopoweroff: This is a form of hibernation
-2. Disables powernap: Used to periodically wake the machine for network, and updates(but not the display)
-3. Disables standby: Used as a time period between sleep and going into hibernation
-4. Disables wake from iPhone/Watch: Specifically when your iPhone or Apple Watch come near, the machine will wake
+1. Desactiva autopoweroff: Esto es una forma de hibernación
+2. Desactiva powernap: Used to periodically wake the machine for network, and updates(but not the display)
+3. Desactiva standby: Used as a time period between sleep and going into hibernation
+4. Desactiva wake from iPhone/Watch: Specifically when your iPhone or Apple Watch come near, the machine will wake
 
-**In your config.plist**:
+**Dentro tu config.plist**:
 
 While minimal changes are needed, here are the ones we care about:
 
@@ -65,26 +65,26 @@ While minimal changes are needed, here are the ones we care about:
 * `NVRAM -> Add -> 7C436110-AB2A-4BBB-A880-FE41995C9F82 -> boot-args`
   * `keepsyms=1`- Makes sure that if a kernel panic does happen during sleep, that we get all the important bits from it
 
-**In your BIOS**:
+**Dentro tu BIOS**:
 
-* Disable:
+* Desactiva:
   * Wake on LAN
   * Trusted Platform Module
     * Note that if you're using BitLocker in Windows, disabling this will result in all your encryption keys being lost. If you're using BitLocker, either disable or note that it may be a cause for wake issues.
   * Wake on USB(Certain boards may actually require this on to wake, but most will get random wakeup calls with it)
-* Enable:
+* Activa:
   * Wake on Bluetooth(If using a Bluetooth device for waking like a keyboard, otherwise you can disable)
   
 ## Main culprits
 
-* [USB](#fixing-usb)
-* [GPUs](#fixing-gpus)
-* [Thunderbolt](#fixing-thunderbolt)
-* [NICs](#fixing-nics)
-* [NVMe](#fixing-nvme)
+* [USB](#arreglar-usb)
+* [GPUs](#arreglar-gpus)
+* [Thunderbolt](#arreglar-thunderbolt)
+* [NICs](#arreglar-nics)
+* [NVMe](#arreglar-nvme)
 * [CPU Power Management](#fixing-cpu-power-management)
 
-### Fixing USB
+### Arreglar USB
 
 This is the #1 cause of sleep issues on hacks, mainly because Apple's drivers are quite bad at guessing ports and the port limit patches have the ill-effect of creating instability.
 
@@ -99,7 +99,7 @@ This guide also includes some other fixes than just mapping:
 
 **USB maps with macOS Catalina(10.15) and newer**: You may find that even with USB mapping, your sleep breaks. one possible solution is renaming the IOClass value from `AppleUSBMergeNub` to `AppleUSBHostMergeProperties`. See here for more info: [Changes in Catalina's USB IOClass](https://github.com/dortania/bugtracker/issues/15)
 
-### Fixing GPUs
+### Arreglar GPUs
 
 With GPUs, it's fairly easy to know what might be causing issues. This being unsupported GPUs in macOS. By default, any GPU that doesn't have drivers already provided in the OS will run off very basic drivers known as VESA drivers. These provide minimal display output but also cause a big issue in that macOS doesn't actually know how to properly interact with these devices. To fix this, well need to either trick macOS into thinking it's a generic PCIe device(which it can better handle, ideal for desktops) or completely power off the card(on laptops, desktop dGPUs have issues powering down)
 
@@ -121,7 +121,7 @@ Special note for 4k Displays with AMD dGPUs:
 
 ![](../images/post-install/sleep-md/agdc.png)
 
-### Fixing Thunderbolt
+### Arreglar Thunderbolt
 
 Thunderbolt is a very tricky topic in the community, mainly due to the complexity of the situation. You really have just 2 paths to go down if you want Thunderbolt and sleep to work simultaneously:
 
@@ -133,7 +133,7 @@ Thunderbolt is a very tricky topic in the community, mainly due to the complexit
 
 Note: Thunderbolt can be enabled without extra work *if* you're ok without sleep, and vice versa.
 
-### Fixing NICs
+### Arreglar NICs
 
 NICs(network Interface Controllers) are fairly easy to fix with sleep, it's mainly the following:
 
@@ -143,7 +143,7 @@ NICs(network Interface Controllers) are fairly easy to fix with sleep, it's main
   * Seems to break on a lot of hacks
   
   
-### Fixing NVMe
+### Arreglar NVMe
 
 So macOS can be quite picky when it comes to NVMe drives, and there's also the issue that Apple's power management drivers are limited to Apple branded drives only. So the main things to do are:
 
@@ -160,9 +160,9 @@ This guide is primarily for dGPU but works the exact same way with NVMe drives(a
   
 ### Fixing CPU Power Management
 
-**For Intel**:
+**Para Intel**:
 
-To verify you have working CPU Power Management, see the [Fixing Power Management](../universal/pm.md) page. And if not, then patch accordingly.
+Para verificar si tienes working CPU Power Management, dirígete a [Fixing Power Management](../universal/pm.md) page. And if not, then patch accordingly.
 
 Also note that incorrect frequency vectors can result in wake issues, so either verify you're using the correct SMBIOS or adjust the frequency vectors of your current SMBIOS with CPUFrend. Tools like [one-key-cpufriend](https://github.com/stevezhengshiqi/one-key-cpufriend) are known for creating bad frequency vectors so be careful with tools not used by Dortania.
 
@@ -172,20 +172,20 @@ A common kernel panic from wake would be:
 Sleep Wake failure in EFI
 ```
 
-**For AMD**:
+**Para AMD**:
 
 Fret not, for their is still hope for you as well! [AMDRyzenCPUPowerManagement.kext](https://github.com/trulyspinach/SMCAMDProcessor) can add power management to Ryzen based CPUs. Installation and usage is explained on the repo's README.md 
 
 ## Other Culprits
 
-* [Displays](#displays)
+* [Pantallas](#pantallas)
 * [NVRAM](#nvram)
 * [RTC](#rtc)
-* [IRQ Conflicts](#irq-conflicts)
+* [Conflictos IRQ](#conflictos-irq)
 * [Audio](#audio)
 * [SMBus](#smbus)
 
-### Displays
+### Pantallas
 
 So display issues are mainly for laptop lid detection, specifically:
 
@@ -233,7 +233,7 @@ For the second one, it's quite easy to tell you have RTC issues when you either 
 
 With some legacy boards, you may actually need to patch your RTC: [Z68 RTC](https://www.insanelymac.com/forum/topic/329624-need-cmos-reset-after-sleep-only-after-login/)
 
-### IRQ Conflicts
+### Conflictos IRQ
 
 IRQ issues usually occur during bootups but some may notice that IRQ calls can break with sleep, this fix is fairly easy:
 
@@ -247,7 +247,7 @@ This will provide you with both SSDT-HPET.aml and `oc_patches.plist`, You will w
  
 Unmanaged or incorrectly managed audio devices can also cause issues, either disable unused audio devices  in your BIOS or verify they're working correctly here:
 
-* [Fixing Audio](../universal/audio.md)
+* [Arreglar Audio](../universal/audio.md)
 
 ### SMBus
 
@@ -269,7 +269,7 @@ The TSC(Time Stamp Counter) is responsible for making sure you're hardware is ru
 The former 2 are plug n play, while the latter will need some customizations:
 
 * Open up the kext(ShowPackageContents in finder, `Contents -> Info.plist`) and change the Info.plist -> `IOKitPersonalities -> IOPropertyMatch -> IOCPUNumber` to the number of CPU threads you have starting from `0`(i9 7980xe 18 core would be `35` as it has 36 threads total)
-* Compiled version can be found here: [TSCAdjustReset.kext](https://github.com/dortania/OpenCore-Install-Guide/blob/master/extra-files/TSCAdjustReset.kext.zip)
+* Compiled version can be found here: [TSCAdjustReset.kext](https://github.com/inyextciones/OpenCore-Install-Guide/blob/master/extra-files/TSCAdjustReset.kext.zip)
 
 ![](../images/post-install/sleep-md/tsc.png)
 

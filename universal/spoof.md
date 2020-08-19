@@ -1,4 +1,4 @@
-# Disabling GPU
+# Desactivar GPU
 
 
 
@@ -7,31 +7,31 @@
 So you need to hide your unsupported GPU? Well with OpenCore things are slightly different, specifically that we need to specify to which exact device we want to spoof. There are 3 ways we can do this:
 
 * Boot Flag
-  * Disables all GPUs except the iGPU
+  * Desacitva todos los GPUs sin incluso la iGPU
 * DeviceProperties
-  * Disables GPU on a per-slot basis
+  * Desactiva GPU on a per-slot basis
 * SSDT
-  * Disables GPU on a per-slot basis
+  * Desactiva GPU on a per-slot basis
 
-**CSM must be off in the BIOS for the spoofing to work correctly, especially on AMD CPU based systems.**
+**CSM debe ser desativado en la BIOS para que el spoof funcione correctamente, especially on AMD CPU based systems.**
 
 ### Boot Flag
 
-By far the simplest way, all you need to do is add the following boot-arg:
+El método más fàcil es agregar este boot-arg:
 
 `-wegnoegpu`
 
-Do note that this will disable all GPUs excluding the iGPU.
+Ten en cuenta que esto va a desactivar todos los GPUs excluding la iGPU.
 
-### DeviceProperties Method
+### Método de DeviceProperties
 
-Here is quite simple, find the PCI route with [gfxutil](https://github.com/acidanthera/gfxutil/releases) and then create a new DeviceProperties section with your spoof:
+Este método también es bastante fácil también, Encuentra la ruta PCI con [gfxutil](https://github.com/acidanthera/gfxutil/releases) y luego crea una nueva sección en DeviceProperties con tu spoof:
 
 ```
-path/to/gfxutil -f GFX0
+dirección/para/gfxutil -f GFX0
 ```
 
-And the output will result in something similar:
+El output will result será algo así:
 
 ```
 DevicePath = PciRoot(0x0)/Pci(0x1,0x0)/Pci(0x0,0x0)/Pci(0x0,0x0)/Pci(0x0,0x0)
@@ -47,11 +47,11 @@ With this, navigate towards `Root -> DeviceProperties -> Add` and add your PCI r
 
 ![](../images/extras/spoof-md/config-gpu.png)
 
-### SSDT Method
+### Métedo de SSDT
 
-There are many ways to find the path but generally, the easiest way is to get into Device Manager under windows and find the PCI path.
+Hay muchas maneras de encontrar la dirección pero generalmente, la manera más fácil es abrir Device Manager en Windows y buscar la dirección PCI.
 
-Example of device path:
+Ejemplo de dirección device:
 
 `\_SB.PCI0.PEG0.PEGP`
 
@@ -100,28 +100,28 @@ Example of device path:
        }
     }
 
-A copy of this SSDT can be found here: [Spoof-SSDT.dsl](https://github.com/dortania/OpenCore-Install-Guide/blob/master/extra-files/Spoof-SSDT.dsl) You will need [MaciASL](https://github.com/acidanthera/MaciASL/releases) to compile this. Remember that `.aml` is assembled and `.dsl` is source code. You can compile with MaciASL by selecting File -> Save As -> ACPI Machine Language.
+Se encuentra una copia de esta SSDT aquí: [Spoof-SSDT.dsl](https://github.com/inyextciones/OpenCore-Install-Guide/blob/master/extra-files/Spoof-SSDT.dsl) Necesitarás [MaciASL](https://github.com/acidanthera/MaciASL/releases) para compilar esto. Ten en cuenta que `.aml` es assembled y `.dsl` es source code. Puedes compilar con MaciASL by seleccionar File -> Save As -> ACPI Machine Language.
 
 Source: CorpNewt
 
 ## Windows GPU Selection
 
-Depending on your setup, you may find that Windows renders games or applications using an undesired GPU.
+Dependiendo de tu setup, you may find that Windows renders games or applications using an undesired GPU.
 
-Many users only have two GPUs. Nvidia and the Intel HD/UHD IGPU. Since Nvidia no longer works on macOS, they may have the monitor plugged into the motherboards HDMI/DP connection for convenience. As a result, Windows will render all games and applications through the IGPU. You can reroute a specific game or application to a different GPU by going to: Settings > System > Display > Graphics settings
+Muchos usarios solo tienen dos GPUs. Nvidia y la IGPU Intel HD/UHD. Dado que Nvidia ya no no es compatible con macOS, they may have the monitor plugged into the motherboards HDMI/DP connection for convenience. As a result, Windows will render all games and applications through the IGPU. You can reroute a specific game or application to a different GPU by going to: Settings > System > Display > Graphics settings
 
-![Credit to CorpNewt for image](../images/extras/spoof-md/corp-windows.png)
+![Credit to CorpNewt para la imagen](../images/extras/spoof-md/corp-windows.png)
 
 The rendered game or application will have its buffer copied to the IGPU. Which is then displayed to you. This does come with a few downsides:
 
-- GSync will no longer work.
-- Nvidia settings can no longer be opened.
+- GSync no funcionará.
+- No se puede abrir los ajustes de Nvidia.
 - Decreased frame rate.
 - Increased input latency.
 - Refresh rate cap.
 
-If your motherboard only has an HDMI connector for the IGPU, the maximum refresh rate for spec 2.1 is [120Hz](https://www.hdmi.org/spec21Sub/EightK60_FourK120). This assumes your board, cable and monitor are of the same spec. This means your 144Hz monitor is only seeing a maximum of 120Hz as determined by the hardware. This limitation *does not* apply if your board has a DP connector for the IGPU.
+Si tu motherboard solo tiene un conector HDMI para la IGPU, the maximum refresh rate for spec 2.1 es [120Hz](https://www.hdmi.org/spec21Sub/EightK60_FourK120). This assumes your board, cable and monitor are of the same spec. This means your 144Hz monitor is only seeing a maximum of 120Hz as determined by the hardware. This limitation *no* apply si tu placa tiene un conector DP para la IGPU.
 
-If you have more than two GPUs (AMD, Nvidia and Intel), this setting is limited. A monitor connected to the AMD GPU means Windows will only allow you to select the AMD GPU or the Intel IGPU. The Nvidia GPU will not show.
+Si tienes más de dos GPUs (AMD, Nvidia y Intel), este ajuste es limitado. Una pantalla conectada a la GPU AMD tiene el efeito que Windows solo te dejará seleccionar la GPU AMD la IGPU de Intel. La GPU de Nvidia GPU no aparecerá.
 
-Note: GSync and NV Settings requires the display to be connected to the GPU. As a recommendation, if you use both operating systems equally your best option is an HDMI or DP switch.
+Nota: GSync y los ajustes de NV requiere que la pantalla sea conectada a la GPU. Una recomendación, si usas ambas sistemas operativos igualmente, la mejor opción es un switch para HDMI o DP.
