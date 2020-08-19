@@ -1,30 +1,30 @@
-# Updating OpenCore and macOS
+# Actualizar OpenCore y macOS
 
 
 
 
 
-## Updating OpenCore
+## Actualizar OpenCore
 
 So the main things to note with updating OpenCore:
 
 * [Releases](https://github.com/acidanthera/OpenCorePkg/releases) happen the first Monday of every month
-* The [Differences.pdf](https://github.com/acidanthera/OpenCorePkg/blob/master/Docs/Differences/Differences.pdf) will tell you all the things added and removed from this version of OpenCore compared to the previous release
+* El [Differences.pdf](https://github.com/acidanthera/OpenCorePkg/blob/master/Docs/Differences/Differences.pdf) will tell you all the things added and removed from this version of OpenCore compared to the previous release
 * The OpenCore Installation Guide will have a note in the [header](https://dortania.github.io/OpenCore-Install-Guide/) about what release version it supports
 
-> So how do I update?
+> Cómo actualizo?
 
 So the process goes as follows:
 
-1. **Download the latest release of OpenCore**
+1. **Descarga la versión má reciente de OpenCore**
 
 * [OpenCorePkg](https://github.com/acidanthera/OpenCorePkg/releases)
 
-2. **Mount your EFI**
+2. **Monta tu EFI**
 
 * So first, lets mount your hard drive's EFI and make a copy somewhere safe with [MountEFI](https://github.com/corpnewt/MountEFI). We won't be updating the drive's EFI at first, instead we'll be grabbing a spare USB to be our crash dummy. This allows us to keep a working copy of OpenCore in case our update goes south
 
-* For the USB, it must be formatted as GUID. Reason for this is that GUID will automatically create an EFI partition, though this will be hidden by default so you'll need to mount it with MountEFI.
+* El USB tiene que ser formateado como GUID. Reason for this is that GUID will automatically create an EFI partition, though this will be hidden by default so you'll need to mount it with MountEFI.
 
 ![](../images/post-install/update-md/usb-erase.png)
 
@@ -34,17 +34,17 @@ So the process goes as follows:
 
 3. **Replace the OpenCore files with the ones you just downloaded**
 
-* The important ones to update:
+* Los más importantes que actualizar:
 
   * `EFI/BOOT/BOOTx64.efi`
   * `EFI/OC/OpenCore.efi`
-  * `EFI/OC/Drivers/OpenRuntime`(**Don't forget this one, OpenCore will not boot with mismatched versions**)
+  * `EFI/OC/Drivers/OpenRuntime`(**No olivdes este, OpenCore no va a arrancar con versions diferentes**)
 
-* You can also update other drivers you have if present, these are just the ones that **must** be updated in order to boot correctly
+* También es una buena oportunidad para actualizar los otros update other drivers, these are just the ones that **must** be updated para arrancar boot correctamente
 
 ![](../images/post-install/update-md/usb-folder-highlight.png)
 
-4. **Compare your config.plist to that of the new Sample.plist**
+4. **Compara tu config.plist to that of la nueva Sample.plist**
 
 * With this, there's a couple ways to do this:
 
@@ -57,20 +57,20 @@ So the process goes as follows:
 
 ![](../images/post-install/update-md/oc-config-compare.png)
 
-4. **Boot!**
+4. **A arrancar!**
 
 * Once everything's working with the dummy USB, you can mount the EFI and move it over to the hard drive's EFI partition. Remember to keep a copy of your old EFI in cases where OpenCore is acting funny down the road
 
-## Updating Kexts
+## Actualizar las Kexts
 
-* Updating Kexts is a similar process to updating OpenCore, make a copy of everything and update on a dummy USB in case there's issues
+* Actualizar las Kexts es un proceso re similar a actualizar OpenCore, make a copy of everything and update on a dummy USB in case there's issues
 
-* The easiest way to update your kexts is via 2 tools:
+* La manera más fácil de actualizar tus kexts es utilizar estas 2 herramientas:
 
-  * [Lilu and Friends](https://github.com/corpnewt/Lilu-and-Friends) to download and compile the kexts
+  * [Lilu and Friends](https://github.com/corpnewt/Lilu-and-Friends) para descargar y compilar las kexts
   * [Kext Extractor](https://github.com/corpnewt/KextExtractor) to merge them into your EFI
 
-## Updating macOS
+## Actualizar macOS
 
 * So this is probably one of the most challenging parts, maintaining your system through OS updates. The main things to keep in mind:
   * With OS updates, make sure everything has been updated and you have some form of recovery like TimeMachine or an older macOS installer with a known good EFI on it
@@ -87,17 +87,17 @@ So the process goes as follows:
 * 10.15.1
   * Requires WhateverGreen 1.3.4+
   * Broke DRM for many GPUs(see [DRM Chart](https://github.com/acidanthera/WhateverGreen/blob/master/Manual/FAQ.Chart.md))
-  * Requires all previous fixes
+  * Requiere todos los arreglos anteriores
 * 10.15.2
-  * Fixes Navi support in the installer
-  * Requires all previous fixes
+  * Arregla compatibilidad con Navi en el instalador
+  * Requiere todos los arreglos anteriores
 * 10.15.3
-  * No change
-  * Requires all previous fixes
+  * Ningún cambio
+  * Requiere todos los arreglos anteriores
 * 10.15.4
-  * [AMD CPU users need to update `cpuid_set_cpufamily` patch](https://github.com/AMD-OSX/AMD_Vanilla)
-  * Fixes DRM on many Ellesmere based Polaris GPUs
-  * Requires all previous fixes(excluding `shikigva=80` for Polaris DRM for most users)
+  * [Usarios de los CPUs de AMD tienen que actualizar el parche `cpuid_set_cpufamily`](https://github.com/AMD-OSX/AMD_Vanilla)
+  * Arregla DRM para muchos GPUS de AMD Polaris basados en Ellesmere
+  * Requiere todos los arreglos anteriores (excluding `shikigva=80` for Polaris DRM for most users)
 * 10.15.5
   * UHD 630's framebuffer broke for many, if you receive black screen you may need to swap from `07009B3E` to `00009B3E`
-  * Comet Lake S no longer requires a CPU ID spoof
+  * Comet Lake S ya no requiere un spoof del CPU ID

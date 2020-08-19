@@ -1,4 +1,4 @@
-# Security and FileVault
+# Seguridad y FileVault
 
 
 
@@ -10,10 +10,10 @@ So something that makes OpenCore truly special is how it's been built with secur
 
 FileVault is macOS's builtin drive encryption, and with OpenCore support for it has been drastically improved compared to the legacy Clover drivers.
 
-To start, you'll need the following .efi drivers:
+Para empezar, necesitas estos .efi drivers:
 
 * OpenRuntime.efi
-  * [OpenUsbKbDxe.efi](https://github.com/acidanthera/OpenCorePkg/releases) for DuetPkg users(systems without UEFI support)
+  * [OpenUsbKbDxe.efi](https://github.com/acidanthera/OpenCorePkg/releases) para usarios de DuetPkg (sistemas incomptible con UEFI)
 
 **Do not use VirtualSMC.efi with OpenCore, its already baked inside**. You do however require VirtualSMC.kext still
 
@@ -43,7 +43,7 @@ For UI issues, see [Fixing Resolution and Verbose](../cosmetic/verbose.md)
 
 ## Vault
 
-**What is vaulting?**
+**Qué es vaulting?**
 
 Well vaulting is based around 2 things, vault.plist and vault.sig:
 
@@ -56,7 +56,7 @@ The specifics of vaulting is that a 256 byte RSA-2048 signature of vault.plist w
 
 Do note that nvram.plist won't be vaulted so users with emulated NVRAM still have risk of someone adding/removing certain NVRAM variables
 
-**Settings in your config.plist**:
+**Ajustes en tu config.plist**:
 
 * `Misc -> Security -> Vault`:
   * `Basic`: Requires just vault.plist to be present, mainly used for filesystem integrity verification
@@ -64,9 +64,9 @@ Do note that nvram.plist won't be vaulted so users with emulated NVRAM still hav
 * `Booter -> ProtectSecureBoot:` `YES`
   * Needed with Insyde firmwares for fixing secure boot keys and reporting violations
 
-**Setting up vault**:
+**Configurar vault**:
 
-Grab OpenCorePkg and open the `CreateVault` folder, inside we'll find the following:
+Descarga OpenCorePkg y abre la carpeta `CreateVault`, dentro de esta carpeta encontramos lo siguiente:
 
 * `create_vault.sh`
 * `RsaTool`
@@ -86,7 +86,7 @@ Now we're ready to run `sign.command`:
 
 If you're doing heavy troubleshooting or have the need to disable Vault, the main things to change:
 
-* Grab a new copy of OpenCore.efi
+* Descarga una nueva copia de OpenCore.efi
 * `Misc -> Security -> Vault` set to Optional
 
 ## ScanPolicy

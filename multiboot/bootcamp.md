@@ -2,32 +2,32 @@
 
 
 
-So a neat feature of OpenCore is the ability to avoid the BIOS entirely and use Startup disk solely for multiboot. Problem comes in when we try to boot windows and have no way of setting the boot option back to macOS. That's where the BootCamp utilities come in.
+So a neat feature of OpenCore is the ability to avoid the BIOS entirely and usar Startup disk solamente para multiboot. Problem comes in when we try to boot windows and have no way of setting the boot option back to macOS. That's where the BootCamp utilities come in.
 
 * Note: This guide will not cover the creation of the Windows installer, only the installation of BootCamp drivers.
-  * Example of Windows installer creation: [Build a Bootable Windows ISO](https://www.freecodecamp.org/news/how-make-a-windows-10-usb-using-your-mac-build-a-bootable-iso-from-your-macs-terminal/)
-  * Reminder: Windows **MUST** be GPT/GUID based, OpenCore will not boot legacy installs
-* Note 2: Using BootCamp utilities from macOS will erase the EFI/BOOT/BOOTx64.efi file on your EFI, which is needed for booting OpenCore. And OpenCore itself does not support MBR based installs so the utility is useless to us
+  * Ejemplo de la creación de un instalador de Windows: [Build a Bootable Windows ISO](https://www.freecodecamp.org/news/how-make-a-windows-10-usb-using-your-mac-build-a-bootable-iso-from-your-macs-terminal/)
+  * Reminder: Windows **DEBE** ser basado en GPT/GUID, OpenCore nunca arrancará legacy installs
+* Note 2: Usar las utilidades de BootCamp desde macOS eliminará EFI/BOOT/BOOTx64.efi en tu EFI, que se necesita para bootear OpenCore. And OpenCore itself does not support MBR based installs so the utility is useless to us
 
 ## Preparación
 
-To start we'll need the following:
+Para empezar necesitamos lo siguiente:
 
-* Windows already installed
-  * MUST be UEFI/GPT based
+* Windows ya instalado
+  * DEBE ser basado en UEFI/GPT
 * [Brigadier](https://github.com/corpnewt/brigadier)
-  * To download the BootCamp drivers
-* SMBIOS injection enabled
+  * Para descargar los BootCamp drivers
+* Inyección del SMBIOS activada
   * As the drivers have a SMBIOS check
-* Setup [Bootstrap.efi](../multiboot/bootstrap.md)
+* [Bootstrap.efi](../multiboot/bootstrap.md) configurado
   * Not required but can help alleviate headaches when Windows erases the BOOTx64.efi OpenCore uses
 
 ## Instalación
 
-To install, it's as simple as grabbing [Brigadier](https://github.com/corpnewt/brigadier) and running either `Brigadier.bat` for Windows or `Brigadier.command` for macOS. If the SMBIOS you're currently using either has BootCamp issues or want to download for another SMBIOS, you can add `--  model{SMBIOS}` to the end:
+To install, it's as simple as grabbing [Brigadier](https://github.com/corpnewt/brigadier) y correr either `Brigadier.bat` para Windows o `Brigadier.command` para macOS. Si la SMBIOS que usas actualmente tiene problemas con BootCamp, o si quieres descargarlo para otra SMBIOS either has BootCamp issues or want to download for another SMBIOS, you can add `--  model{SMBIOS}` to the end:
 
 ```sh
-path/to/Brigadier --model MacPro7,1
+dirección/para/Brigadier --model MacPro7,1
 ```
 
 * **Note**: Older versions of the BootCamp installer(6.0) do not support APFS, you'll need to either choose a newer SMBIOS that would have it bundled(ie. iMac 19,1) or after installation update your bootcamp software. See below for more details on troubleshooting: [Windows Startup Disk can't see APFS drives](#windows-startup-disk-cant-see-apfs-drives)

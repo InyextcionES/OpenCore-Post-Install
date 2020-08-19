@@ -1,21 +1,21 @@
-# Emulated NVRAM
+# NVRAM Emulada
 
 
 
 
 
-So this section is for those who don't have native NVRAM, the most common hardware to have incompatible native NVRAM with macOS are X99 and some X299 series chipsets:
+Esta sección es para los que no tienen NVRAM nativo. El hardware más común que tiene NVRAM incompatible con macOS son X99 y ciertos chipsets de la serie X299:
 
 * X99
 * X299
 
-For B360, B365, H310, H370, Z390 users, make sure you have [SSDT-PMC](https://dortania.github.io/Getting-Started-With-ACPI/) both under EFI/OC/ACPI and config.plist -> ACPI -> Add. For more info on making and compiling SSDTs, please see [**Getting started with ACPI**](https://dortania.github.io/Getting-Started-With-ACPI/)
+Para B360, B365, H310, H370, Z390, usen [SSDT-PMC](https://dortania.github.io/Getting-Started-With-ACPI/) y ponerlo en EFI/OC/ACPI y config.plist -> ACPI -> Add. Para más información about crear y compilar los SSDTs, dirígete a [**Getting started with ACPI**](https://dortania.github.io/Getting-Started-With-ACPI/)
 
-**Note**: 10th gen CPUs do not need this SSDT
+**Note**: CPUs de la 10a generación no necesitan esta SSDT
 
 ## Cleaning out the Clover gunk
 
-So some may not have noticed but Clover may have installed RC scripts into macOS for proper NVRAM emulation. This is an issue as it conflicts with OpenCore's method of emulation.
+So some may not have noticed but Clover may have installed RC scripts into macOS for proper NVRAM emulation. Esto es un problema ya que it conflicts con la emulación de OpenCore.
 
 Files to delete:
 
@@ -34,7 +34,7 @@ If folders are empty then delete them as well:
 
 ## Verifying if you have working NVRAM
 
-To start, open the terminal and run the following one line at a time:
+Para empezar, abre la terminal y corre the following one line at a time:
 
 ```sh
 sudo -s
@@ -43,23 +43,23 @@ sudo nvram myvar=test
 exit
 ```
 
-Now reboot and run this:
+Ahora reinicía y corre esto:
 
 ```sh
 nvram -p | grep -i myvar
 ```
 
-If nothing returns then your NVRAM is not working. If a line containing `myvar test` returns, your NVRAM is working.
+If nothing returns then your NVRAM is not working. If a line containing `myvar test` returns, la NVRAM funciona.
 
 Note: `nvram -c` requires SIP to be off, an alternative is to wipe NVRAM at the boot menu. Reminder you'll need `Misc -> Security -> AllowNvramReset -> YES`
 
-## Enabling emulated NVRAM (with a nvram.plist)
+## Activar la NVRAM emulada (con nvram.plist)
 
-To enable emulated NVRAM, you'll need 3 things set:
+Para activar la NVRAM emulada, necesitas puestan estas 3 cosas:
 
 ![](../images/post-install/nvram-md/nvram.png)
 
-Within your config.plist:
+Dentro de la config.plist:
 
 * **Booter**:
   * `DisableVariableWrite`: set to `NO`
@@ -71,7 +71,7 @@ Within your config.plist:
   * `LegacySchema`: NVRAM variables set(OpenCore compares these to the variables present in nvram.plist)
   * `WriteFlash`: set to `YES`
 
-And within your EFI:
+Dentro tu EFI:
 
 * `OpenRuntime.efi` driver(this is needed for proper sleep, shutdown and other services to work correctly
 
@@ -79,11 +79,11 @@ Now grab the ['LogoutHook.command'](https://github.com/acidanthera/OpenCorePkg/r
 
 `/Users/(your username)/LogoutHook/LogoutHook.command`
 
-Open up terminal and run the following:
+Abre la terminal y corre lo siguiente:
 
 `sudo defaults write com.apple.loginwindow LogoutHook /Users/(your username)/LogoutHook/LogoutHook.command`
 
-And voila! You have emulated NVRAM!
+And voila! Tienes NVRAM emulada!
 
 Do keep in mind this requires the `nvram` command to support the `-x` flag for this to work correctly which is unavailable on macOS 10.12 and below. If you are installing macOS 10.12 or earlier, you need to copy `nvram.mojave` into the same folder as `LogoutHook.command`, which fixes this by invoking it instead of the system `nvram` command.
 
