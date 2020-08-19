@@ -1,4 +1,4 @@
-# Installing and using BootCamp utilities
+# Instalar y usar las utilidades de BootCamp
 
 
 
@@ -9,7 +9,7 @@ So a neat feature of OpenCore is the ability to avoid the BIOS entirely and use 
   * Reminder: Windows **MUST** be GPT/GUID based, OpenCore will not boot legacy installs
 * Note 2: Using BootCamp utilities from macOS will erase the EFI/BOOT/BOOTx64.efi file on your EFI, which is needed for booting OpenCore. And OpenCore itself does not support MBR based installs so the utility is useless to us
 
-## Preparations
+## Preparación
 
 To start we'll need the following:
 
@@ -22,7 +22,7 @@ To start we'll need the following:
 * Setup [Bootstrap.efi](../multiboot/bootstrap.md)
   * Not required but can help alleviate headaches when Windows erases the BOOTx64.efi OpenCore uses
 
-## Installation
+## Instalación
 
 To install, it's as simple as grabbing [Brigadier](https://github.com/corpnewt/brigadier) and running either `Brigadier.bat` for Windows or `Brigadier.command` for macOS. If the SMBIOS you're currently using either has BootCamp issues or want to download for another SMBIOS, you can add `--  model{SMBIOS}` to the end:
 
