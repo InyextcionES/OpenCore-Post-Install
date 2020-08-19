@@ -1,21 +1,21 @@
-# Battery Patching
+# Parchear la Batería
 
-While at the moment battery patching is not something covered in this guide, we'll at least point you to some helpful resources and add some useful notes for when using them in OpenCore.
+De momento esta guía no cubre los parches para la batería, pero aquí puedes encontrar unos recursos útiles y consejos para usarlos con OpenCore.
 
-## DSDT Patching
+## Parchear la DSDT
 
-While custom DSDT injection should be avoided as to prevent issues with Windows and firmware updates, it can be quite helpful as a starting point since it's a bit easier to grasp and do yourself:
+Aunque se deberíá evitar custom DSDT injection para evitar problemas con Windows y actualizaciones del, puede ser bastante fácil como un punto de comiezo ya que es más dacil de comprender y hacer por ti mismo:
 
-**[Rehabman's how to patch DSDT for working battery status](https://www.tonymacx86.com/threads/guide-how-to-patch-dsdt-for-working-battery-status.116102/)**
+**[How to patch DSDT for working battery status de Rehabman](https://www.tonymacx86.com/threads/guide-how-to-patch-dsdt-for-working-battery-status.116102/)**
 
-* Note: When re-injecting your DSDT, it should be the first in the list of ACPI -> Add in the config.plist. And also remember that the patched DSDT would also go into EFI/OC/ACPI
+* Nota: Cuando re-inyectas tu DSDT, tiene que ser la primera en la lista de ACPI -> Add en la config.plist. Además ten en cuenta que la DSDT parcheada también se pone en EFI/OC/ACPI
 
-* Note 2: Avoid using the MaciASL and iASL provided by Rehabman, they have been long neglected and so highly recommended grabbing a newer variant from Acidanthera: [MaciASL](https://github.com/acidanthera/MaciASL/releases)
+* Nota 2: Evita el uso de MaciASL y iASL provided por Rehabman, they have been long neglected así que se recomienda descargar una versión más nueva de Acidanthera: [MaciASL](https://github.com/acidanthera/MaciASL/releases)
 
-## Battery Hot-patching
+## Hot-patching de la Batería
 
-Once you've finally gotten your DSDT patched and battery working in macOS, it's time to finally create our very own hot-patches. How these differ from regular DSDT patching is that it's done on the fly with the DSDT allowing for greater flexibility with firmware updates:
+Por fin cuando tengas tu DSDT parcheado y la batería funcionando con macOS, es la hora de crear nustros propios hot-patches. Estos son diferentes a lo regulares parches del DSDT ya que son hechos on-the-fly con la DSDT y por lo tanto tiene mejor flexibilidad con las actualizaciones del firmware:
 
-**[Rehabman's Guide to Using Clover to "hotpatch" ACPI](https://www.tonymacx86.com/threads/guide-using-clover-to-hotpatch-acpi.200137/)**
+**[Guide to Using Clover to "hotpatch" ACPI de Rehabman](https://www.tonymacx86.com/threads/guide-using-clover-to-hotpatch-acpi.200137/)**
 
-* Note: Specifically post #2 refers to battery hot-patching
+* Nota: Específicamente la post #2 es la que se trata del hot-patching de la batería
