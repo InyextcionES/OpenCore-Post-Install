@@ -14,7 +14,7 @@ Esta guía es dividida entre 6 partes:
 
 * [Universal](#universal)
   * All users are recommended to follow
-* [USB Fixes](#arreglos-para-usb)
+* [Arreglos para USB](#arreglos-para-usb)
   * All users are recommended to follow as well
 * [Laptop Specifics](#laptop-specifics)
   * Laptop users are recommended to follow in addition to the above
