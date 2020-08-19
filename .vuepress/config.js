@@ -50,7 +50,7 @@ module.exports = {
 
     themeConfig: {
         lastUpdated: true,
-        repo: 'https://github.com/dortania/OpenCore-Post-Install',
+        repo: 'https://github.com/inyextciones/OpenCore-Post-Install',
         editLinks: false,
         docsDir: 'OpenCore-Post-Install',
         editLinkText: '',
