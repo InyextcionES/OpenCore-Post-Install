@@ -1,6 +1,6 @@
-# Post instalación de OpenCore
+# Post Instalación de OpenCore
 
-¡Bienvenido a la guía de post instalación de OpenCore! Por favor ten en cuenta de que si no has instalado macOS aún, te recomendamos que sigas nuestra guía de instalación:
+¡Bienvenido a la guía de Post Instalación de OpenCore! Por favor ten en cuenta de que si no has instalado macOS aún, te recomendamos que sigas nuestra guía de instalación:
 
 * [Guía de instalación de OpenCore](https://inyextciones.github.io/OpenCore-Install-Guide/)
 
