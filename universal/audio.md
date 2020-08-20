@@ -1,52 +1,52 @@
-# Fixing audio with AppleALC
+# Arreglar audio con AppleALC
 
 
 
 
 
-So to start, we'll assume you already have Lilu and AppleALC installed, if you're unsure if it's been loaded correctly you can run the following in terminal(This will also check if AppleHDA is loaded, as without this AppleALC has nothing to patch):
+Para empezar, we'll assume que ya tienes Lilu y AppleALC instaladas, si no estés seguro de que hayan cargadas correctamente puedes correr lo siguiente en la terminal(Esto también verifica si AppleHDA está cargada, ya que sin esto AppleALC no tiene nada que parchear):
 
 ```sh
 kextstat | grep -E "AppleHDA|AppleALC|Lilu"
 ```
 
-If all 3 show up, you're good to go. And make sure VoodooHDA **is not present**. This will conflict with AppleALC otherwise.
+If all 3 show up, you're good to go. Y asegúrate de que VoodooHDA **no sea presente**. Esto conflict con AppleALC otherwise.
 
-If you're having issues, see the [Troubleshooting section](../universal/audio.md#troubleshooting)
+Si encuentras algún problema, dirígete a la [sección Troubleshooting](../universal/audio.md#troubleshooting)
 
-## Finding your layout ID
+## Encontrar tu layout ID
 
-So for this example, we'll assume your codec is ALC1220. To verify yours, you have a couple options:
+Para este ejemplo, we'll assume que tu codec es ALC1220. Para verificar el tuyo, tienes unas opciones:
 
-* Checking motherboard's spec page and manual
-* Check Device Manager in Windows
-* Run `cat` in terminal on Linux
+* Revisar la especifacione o el manual del motherboard
+* Revisar Device Manager en Windows
+* Corre `cat` en la terminal en Linux
   * `cat /proc/asound/card0/codec#0 | less`
 
-Now with a codec, we'll want to cross reference it with AppleALC's supported codec list:
+Ahora con un codec, queremos cross reference it con la lista de codecs compatibles con AppleALC:
 
 * [AppleALC Supported Codecs](https://github.com/acidanthera/AppleALC/wiki/Supported-codecs)
 
-With the ALC1220, we get the following:
+Con el ALC1220, encontramos lo siguiente:
 
 ```
 0x100003, layout 1, 2, 3, 5, 7, 11, 13, 15, 16, 21, 27, 28, 29, 34
 ```
 
-So from this it tells us 2 things:
+Esto nos muestra 2 cosas:
 
-* Which hardware revision is supported(`0x100003`), only relevant when multiple revisions are listed with different layouts
-* Various layout IDs supported by our codec(`layout 1, 2, 3, 5, 7, 11, 13, 15, 16, 21, 27, 28, 29, 34`)
+* La revisión del hardware que es compatible(`0x100003`), solo relevant when multiple revisiones are listed con layouts diferentes
+* Varias layout IDs compatibles con nuestro codec(`layout 1, 2, 3, 5, 7, 11, 13, 15, 16, 21, 27, 28, 29, 34`)
 
-Now with a list of supported layout IDs,  we're ready to try some out
+Ahora con una lista de layout IDs compatibles,  estamos listos a probarlos
 
-**Note**: If your Audio Codec is ALC 3XXX this is likely false and just a rebranded controller, do your research and see what the actual controller is.
+**Nota**: Si tu Audio Codec es ALC 3XXX es probable que es falso y solamente es un contraldor, do your research para averiguar cuál es el controlador en realidad.
 
-* An example of this is the ALC3601, but when we load up Linux the real name is shown: ALC 671
+* Un example de esto es el ALC3601, pero cuando usamos Linux se muestra el nombre verdadero: ALC 671
 
-## Testing your layout
+## Probar tu layout
 
-To test out our layout IDs, we're going to be using the boot-arg `alcid=xxx` where xxx is your layout. Remember that to try layout IDs **one at a time**. Do not add multiple IDs or alcid boot-args, if one doesn't work then try the next ID and etc
+Para probar nuestros layout IDs, vamos a usar el boot-arg `alcid=xxx` donde xxx es tu layout. Ten en cuenta que hay que probar los layout IDs **uno a uno**. No agregas multiple IDs o alcid boot-args, si uno no funciona entonces probar el próximo ID y etc
 
 ```
 config.plist
@@ -56,48 +56,48 @@ config.plist
           ├── boot-args | String | alcid=11
 ```
 
-## Making Layout ID more permanent
+## Hacer más permenante el Layout ID
 
-Once you've found a Layout ID that works with your hack, we can create a more permanent solution for closer to how real macs set their Layout ID.
+Cuando has encontrado un Layout ID que funciona con tu hack, podemos crear una solución más permanente que es más similar que la manera usada por las Macs reales para configurar sus Layout IDs.
 
-With AppleALC, there's a priority hierarchy with which properties are prioritized:
+Con AppleALC, there's a priority hierarchy con la que las properties son prioritizadas:
 
-1. `alcid=xxx` boot-arg, useful for debugging and overrides all other values
-2. `alc-layout-id` in DeviceProperties, **should only be used on Apple hardware**
-3. `layout-id` in DeviceProperties, **should be used on both Apple and non-Apple hardware**
+1. `alcid=xxx` boot-arg, útill para debugging y overrides todos los otros values
+2. `alc-layout-id` en DeviceProperties, **se debería usar solamente en hardware de Apple**
+3. `layout-id` en DeviceProperties, **se debería usar en Apple and non-Apple hardware**
 
-To start, we'll need to find out where our Audio controller is located on the PCI map. For this, we'll be using a handy tool called [gfxutil](https://github.com/acidanthera/gfxutil/releases) then with the macOS terminal:
+Para empezar, tenemos que ver dónde nuestro controlador de audio está ubicada en el PCI map. Para esto, vamos a usar una herramienta handy llamada [gfxutil](https://github.com/acidanthera/gfxutil/releases) y correr esto en la terminal de macOS:
 
 ```sh
-path/to/gfxutil -f HDEF
+dirección/para/gfxutil -f HDEF
 ```
 
 ![](../images/post-install/audio-md/gfxutil-hdef.png)
 
-Then add this PciRoot with the child `layout-id` to your config.plist under DeviceProperties -> Add:
+Luego agrega esta PciRoot con el child `layout-id` a tu config.plist en DeviceProperties -> Add:
 
 ![](../images/post-install/audio-md/config-layout-id.png)
 
-Note that AppleALC can accept both Decimal/Number and Hexadecimal/Data, generally the best method is Hex as you avoid any unnecessary conversions. You can use a simple [decimal to hexadecimal calculator](https://www.rapidtables.com/convert/number/decimal-to-hex.html) to find yours. `printf '%x\n' DECI_VAL`:
+Ten en cuenta que AppleALC puede usar Decimal/Number y Hexadecimal/Data, generalmente el mejor método es Hex ya que evita cualquier conversión no necesarias. Puedes usar una [calculadora de decimal a hexadecimal](https://www.rapidtables.com/convert/number/decimal-to-hex.html) para encontrar el tuyo. `printf '%x\n' DECI_VAL`:
 
 ![](../images/post-install/audio-md/hex-convert.png)
 
-So in this example, `alcid=11` would become  either:
+En este ejemplo, `alcid=11` será either:
 
 * `layout-id | Data | <0B000000>`
 * `layout-id | Number | <11>`
 
-Note that the final HEX/Data value should be 4 bytes in total(ie. `0B 00 00 00` ), for layout IDs surpassing 255(`FF 00 00 00`) will need to remember that the bytes are swapped. So 256 will become `FF 01 00 00`
+Note that the final HEX/Data value should be 4 bytes en total(ie. `0B 00 00 00` ), para layout IDs más grandes que 255(`FF 00 00 00`) tienes que acordarte que los bytes son swapped. Así que 256 se convierte a `FF 01 00 00`
 
 * HEX Swapping and data size can be completely ignored using the Decimal/Number method
 
-**Reminder**: You **MUST** remove the boot-arg afterwards, as it will always have the top priority and so AppleALC will ignore all other entries like in DeviceProperties
+**Reminder**: Tu **DEBES** eliminar el boot-arg después, as it will always have the top priority y así que AppleALC ignorará todas las otras entradas como las en DeviceProperties
 
-## Miscellaneous issues
+## Problemas misceláneos
 
-### No Mic on AMD
+### No Mic en AMD
 
-* This is a common issue with when running AppleALC with AMD, specifically no patches have been made to support Mic input. At the moment the "best" solution is to either buy a USB DAC/Mic or go the VoodooHDA.kext method. Problem with VoodooHDA is that it's been known to be unstable and have worse audio quality than AppleALC
+* Esto es una problema muy común cuando se usa AppleALC con AMD, específicamente no se han hecho ningunos parches para soportar Mic input. De momento, la "mejor" solución es either comprar un DAC/Mic USB o usar el método de VoodooHDA.kext. El problema con VoodooHDA es que es conocida por ser inestable y tener peor calidad de audio que AppleALC
 
 ### Same layout ID from Clover doesn't work on OpenCore
 
@@ -114,31 +114,31 @@ For odd cases where RTC and HPET take IRQs from other devices like USB and audio
 
 So for troubleshooting, we'll need to go over a couple things:
 
-* [Checking if you have the right kexts](#checking-if-you-have-the-right-kexts)
-* [Checking if AppleALC is patching correctly](#checking-if-applealc-is-patching-correctly)
-* [Checking AppleHDA is vanilla](#checking-applehda-is-vanilla)
+* [Revisar si tienes las kexts correctas](#revisar-si-tienes-las-kexts-correctas)
+* [Verificar si AppleALC está parcheando correctamente](#verificar-si-applealc-está-parcheando-correctamente)
+* [Verificar AppleHDA es vanilla](#verificar-applehda-es-vanilla)
 * [AppleALC working inconsistently](#applealc-working-inconsistently)
 * [AppleALC not working correctly with multiple sound cards](#applealc-not-working-correctly-with-multiple-sound-cards)
 
-### Checking if you have the right kexts
+### Revisar si tienes las kexts correctas
 
-To start, we'll assume you already have Lilu and AppleALC installed, if you're unsure if it's been loaded correctly you can run the following in terminal(This will also check if AppleHDA is loaded, as without this AppleALC has nothing to patch):
+Para empezar, we'll assume que ya tienes Lilu y AppleALC instaladas, if you're unsure if it's been loaded correctly puedes correr lo siguiente en la terminal(Esto también revisará si AppleHDA está cargada, ya que sin esto AppleALC no tiene nada que parchear):
 
 ```sh
 kextstat | grep -E "AppleHDA|AppleALC|Lilu"
 ```
 
-If all 3 show up, you're good to go. And make sure VoodooHDA **is not present**. This will conflict with AppleALC otherwise. Other kexts to make sure you do not have in your system:
+Si aparencen estas 3, estás listo para continuar. And make sure VoodooHDA **no es presente**. This will conflict with AppleALC otherwise. Otras kexts que eliminar de tu sistema:
 
 * RealtekALC.kext
 * CloverALC.kext
 * VoodooHDA.kext
 * HDA Blocker.kext
-* HDAEnabler#.kext(# can be 1, 2, or 3)
+* HDAEnabler#.kext(# puede ser 1, 2, o 3)
 
 > Hey Lilu and/or AppleALC aren't showing up
 
-Generally the best place to start is by looking through your OpenCore logs and seeing if Lilu and AppleALC injected correctly:
+Generalmente el mejor punto de comienzo es busacar los logs de OpenCore y ver si Lilu y AppleALC fueron inyectadas correctamente:
 
 ```
 14:354 00:020 OC: Prelink injection Lilu.kext () - Success
@@ -153,27 +153,27 @@ If it says failed to inject:
 
 Main places you can check as to why:
 
-* **Injection order**: Make sure that Lilu is above AppleALC in kext order
-* **All kexts are latest release**: Especially important for Lilu plugins, as mismatched kexts can cause issues
+* **Orden de inyecciónr**: Asegúrate que Lilu es antes de AppleALC en el orden de las kexts
+* **Todas las kexts son la versión más reciente**: Especialmente importante para los plugins de Lilu, ya que kexts mixtas pueden causar problemas
 
-Note: To setup file logging, see [OpenCore Debugging](https://dortania.github.io/OpenCore-Install-Guide/troubleshooting/debug.html).
+Nota: Para configurar file logging, dirígete a [OpenCore Debugging](https://inyextciones.github.io/OpenCore-Install-Guide/troubleshooting/debug.html).
 
-### Checking if AppleALC is patching correctly
+### Verificar si AppleALC está parcheando correctamente
 
-So with AppleALC, one of the most easiest things to check if the patching was done right was to see if your audio controller was renamed correctly. Grab [IORegistryExplorer](https://github.com/khronokernel/IORegistryClone/blob/master/ioreg-302.zip) and see if you have an HDEF device:
+Pues con AppleALC, la manera más fácil de verificar si hizo los parches es ver si tu contraldor de audio fue renombrado correctamente. Descarga [IORegistryExplorer](https://github.com/khronokernel/IORegistryClone/blob/master/ioreg-302.zip) y revisa si tienes un dispositivo HDEF:
 
 ![](../images/post-install/audio-md/hdef.png)
 
-As you can see from the above image, we have the following:
+Se puede ver en la imagen por encima que tenemos lo siguiente:
 
 * HDEF Device meaning our rename did the job
 * AppleHDAController attached meaning Apple's audio kext attached successfully
 * `alc-layout-id` is a property showing our boot-arg/DeviceProperty injection was successful
-  * Note: `layout-id | Data | 07000000` is the default layout, and `alc-layout-id` will override it and be the layout AppleHDA will use
+  * Nota: `layout-id | Data | 07000000` es la default layout, y `alc-layout-id` will override it and be the layout AppleHDA will use
 
-Note: **Do not rename your audio controller manually**, this can cause issues as AppleALC is trying to patch already. Let AppleALC do it's work.
+Nota: **No renombres manualmente tu controlador de audio**, esto puede causar problemas dado que AppleALC ya está intentando a parchear. Let AppleALC do it's work.
 
-**More examples**:
+**Más ejemplos**:
 
 Correct layout-id           |  Incorrect layout-id
 :-------------------------:|:-------------------------:
@@ -181,15 +181,15 @@ Correct layout-id           |  Incorrect layout-id
 
 As you can see from the above 2, the right image is missing a lot of AppleHDAInput devices, meaning that AppleALC can't match up your physical ports to something it can understand and output to. This means you've got some work to find the right layout ID for your system.
 
-### Checking AppleHDA is vanilla
+### Verificar AppleHDA es vanilla
 
-This section is mainly relevant for those who were replacing the stock AppleHDA with a custom one, this is going to verify whether or not yours is genuine:
+Principalmente esta sección es para ellos que antes reemplazaban la AppleHDA stock con una custom one, esto va a verificiar verify si el tuyo es genuino:
 
 ```sh
 sudo kextcache -i / && sudo kextcache -u /
 ```
 
-This will check if the signature is valid for AppleHDA, if it's not then you're going to need to either get an original copy of AppleHDA for your system and replace it or update macOS(kexts will be cleaned out on updates). This will only happen when you're manually patched AppleHDA so if this is a fresh install it's highly unlikely you will have signature issues.
+Esto verifica la signature de AppleHDA y que es válida. Si no es válido tienes que conseguir una copia original de AppleHDA para tu sistema y remplazarla, o actualizar macOS(las kexts serán limpiadas durante las actualizaciones). Esto solo ocurre cuando has parcheado AppleHDA manualmente, así que si tienes una instalación nueva es re improbable que encuentras problemas de la signature.
 
 ### AppleALC working inconsistently
 
@@ -201,7 +201,7 @@ Specify in boot-args the delay:
 alcdelay=1000
 ```
 
-Or Specify via DeviceProperties(in your HDEF device):
+Or Specify via DeviceProperties(en tu dispositivo HDEF):
 
 ```
 alc-delay | Number | 1000
@@ -213,35 +213,35 @@ The above boot-arg/property will delay AppleHDAController by 1000 ms(1 second), 
 
 For rare situations where you have 2 sounds cards(ex. onboard Realtek and an external PCIe card), you may want to avoid AppleALC patching devices you either don't use or don't need patching(like native PCIe cards). This is especially important if you find that AppleALC will not patch you onboard audio controller when the external one is present.
 
-To get around this, we'll first need to identify the location of both our audio controllers. The easiest way is to run [gfxutil](https://github.com/acidanthera/gfxutil/releases) and search for the PCI IDs:
+To get around this, primero tenemos que identificar la ubicación de nuestros 2 controladores de audio. La manera más fácil es correr [gfxutil](https://github.com/acidanthera/gfxutil/releases) y buscar las PCI IDs:
 
 
 ```sh
-/path/to/gfxutil
+/dirección/para/gfxutil
 ```
 
-Now with this large output you'll want to find your PciRoot pathing, for this example, lets use a Creative Sound-Blaster AE-9PE PCIe audio card. For this, we know the PCI ID is `1102:0010`. So looking through our gfxutil output we get this:
+Now with this large output you'll want to find your PciRoot pathing, for this example, usamos una Creative Sound-Blaster AE-9PE PCIe. Para esto, sabemos que la PCI ID es `1102:0010`. Cuando buscamos en el output de gfxutil encontramos esto:
 
 ```
 66:00.0 1102:0010 /PC02@0/BR2A@0/SL05@0 = PciRoot(0x32)/Pci(0x0,0x0)/Pci(0x0,0x0)
 ```
 
-From here, we can clearly see our PciRoot pathing is:
+Aquí, claramente vemos que nuestra PciRoot es:
 
 ```
 PciRoot(0x32)/Pci(0x0,0x0)/Pci(0x0,0x0)
 ```
 
 
-* **Note**: This will assume you know both the Vendor and Device ID of the external sound card. For reference, these are the common Vendor IDs:
+* **Nota**: This will assume you que sabes la Vendor ID y la Device ID de la external tarjeta de audio. For reference, these are the common Vendor IDs:
   * Creative Labs: `1102`
   * AsusTek: `1043`
-* **Note 2**: Your ACPI and PciRoot path will look different, so play attention to **your** gfxutil output
+* **Nota 2**: Tus direcciones ACPI y PciRoot serán diferentes, así que debes prestar atención a **tu** gfxutil output
 
 
-Now that we have our PciRoot pathing, we can finally open up our config.plist and add our patch.
+Ahora que sabemos nuestra dirección PciRoot, por fin podemos abrir nuestra config.plist y agregar nuestro parche.
 
-Under DeviceProperties -> Add, you'll want to add your PciRoot(as a Dictionary) with the child called `external-audio`:
+En DeviceProperties -> Add, tienes que agregar tu PciRoot(como un Dictionary) con el child llamado `external-audio`:
 
 ```
 DeviceProperties
@@ -252,4 +252,4 @@ DeviceProperties
 
 ![](../images/post-install/audio-md/external-audio.png)
 
-And with this done, you can reboot and AppleALC should now ignore your external audio controller!
+Y con todo esto hecho, puedes reiniciar y ahora AppleALC debería ignorar tu external controlador de audio!
