@@ -1,25 +1,25 @@
-# GPU Patching
+# Parches del GPU
 
 
 
-This little section is for those who need more than what is provided by simple framebuffer patching and WhateverGreen's auto-patches:
+Esta sección pequenna es para ellos que tienen más que lo que es provided by simple framebuffer patching y los auto-parches de WhateverGreen:
 
 * [Applying a fakeID for unsupported GPUs](https://dortania.github.io/Getting-Started-With-ACPI/Universal/spoof.html)
-* [iGPU BusID patching for 300 series motherboards](#iGPU-BusID-Patching)
+* [Parchear BusID de la iGPU para motherboards de la serie 300](#parchear-BusID-del-la-iGPU)
 
-## Converting a clover fakeID to OpenCore
+## Convertir un fakeID de Clover para OpenCore
 
-Guide moved here: [Renaming GPUs](https://dortania.github.io/Getting-Started-With-ACPI/Universal/spoof.html)
+Guía movida aquí: [Renaming GPUs](https://dortania.github.io/Getting-Started-With-ACPI/Universal/spoof.html)
 
-## iGPU BusID Patching
+## Parchear BusID de la iGPU
 
-This section is for users running "true" 300 series motherboards( B360, B365, H310, H370, Z390) who are having issues setting up their iGPU as a display out.
+Esta sección es para usarios usando motherboards de la "true" serie 300( B360, B365, H310, H370, Z390) que tienen problemas con usar pantallas conectadas a la iGPU.
 
-So to get started I'll assume you've already done basic framebuffer patches in your config from the [Coffee Lake portion of the guide](https://dortania.github.io/OpenCore-Install-Guide/config.plist/coffee-lake.html), it should look something like this:
+So to get started I'll assume que ya has hecho basic framebuffer patches en tu config desde la [sección Coffee Lake de la guía](https://inyextciones.github.io/OpenCore-Install-Guide/config.plist/coffee-lake.html), debería ser algo así:
 
 ![](../images/extras/gpu-patches-md/prereq.png)
 
-* **Note**: With macOS 10.15.5, there seems to be a lot of issues with black screen using `07009B3E`, if you get similar issues try swapping to `00009B3E`
+* **Nota**: Con macOS 10.15.5, there seems to be a lot of issues with black screen using `07009B3E`, if you get similar issues try swapping to `00009B3E`
 
 Now that we're prepped, we can start looking into busID patching. Checking the dumps on [InsanelyMac](https://www.insanelymac.com/forum/topic/334899-intel-framebuffer-patching-using-whatevergreen/) shows us this for the `3E9B0007` ID(Desktop UHD 630):
 
@@ -49,7 +49,7 @@ Looking at all this can be quite overwhelming, but we'll break it down to be a b
 03060800 00040000 C7030000
 ```
 
-These are your iGPUs ports by default, lets go through port 1 and see what each section is used for:
+These are your iGPUs ports by default, lets go through port 1 y ver para qué se usa cada sección:
 
 The first port:
 
@@ -79,10 +79,10 @@ Flags - We leave it as default:
 
 Things to note:
 
-* You cannot use the same busId twice, having 2 in use will create conflicts
-* Pipe number and flags don't need to changed
+* No es posible usar la misma busId twice, tener 2 usadas creará conflictos
+* Pipe number y flags no tienen que ser cambiados
 
-List of connector types:
+Lista de connector types:
 
 * `00 04 00 00` - DisplayPort
 * `00 08 00 00` - HDMI
@@ -90,15 +90,15 @@ List of connector types:
 * `02 00 00 00` - LVDS (for laptops)
 * `01 00 00 00` - Dummy port
 
-### Mapping video ports
+### Mapear puertos de vídeo
 
-1. Plug display into HDMI port
+1. Conecta la pantalla al puerto HDMI
 
 2. Set Port 1 to the HDMI connector type:
 
    * 01xx0900 **00080000** C7030000
 
-3. Disable ports 2 and 3 with busid=00:
+3. Desactiva los puertos 2 y 3 con busid=00:
 
    * 02**00**0A00 00040000 C7030000
    * 03**00**0800 00040000 C7030000
@@ -116,9 +116,9 @@ If you still get no output, set port 1's busid to 00 and start going through bus
 * 02xx0A00 00080000 C7030000
 * 03000800 00040000 C7030000
 
-### Adding to your config.plist
+### Agregar a tu config.plist
 
-So adding these patches are simple though a bunch of entries are required:
+Es bastante fácil agregar estos parche aunque un montón de entradas son requeridas:
 
 * framebuffer-con0-enable = `01000000`
 * framebuffer-con1-enable = `01000000`
@@ -127,9 +127,9 @@ So adding these patches are simple though a bunch of entries are required:
 * framebuffer-con1-alldata = port 2
 * framebuffer-con2-alldata = port 3
 
-So when adding the patches, port 1 will actually become con0 as the ports start at 0. These are also all data types when entering your values.
+Entonces cuando agregas los parches, port 1 se convertirá a con0 ya que los puertos empiezan desde 0. These are also all data types when entering your values.
 
-A finished config should look something like this:
+Una config completada debería ser algo así:
 
 ![](../images/extras/gpu-patches-md/path-done.png)
 
