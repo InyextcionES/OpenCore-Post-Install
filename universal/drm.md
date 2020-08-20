@@ -1,4 +1,4 @@
-# Fixing DRM support and iGPU performance
+# Arreglar compatibilidad con DRM y iGPU performance
 
 
 
@@ -6,10 +6,10 @@
 
 So with DRM, we have a couple things we need to mention:
 
-* DRM requires a supported dGPU
-  * See the [GPU Buyers Guide](https://dortania.github.io/GPU-Buyers-Guide/) for supported cards
-* DRM is broken for iGPU-only systems
-  * This could be fixed with Shiki (now WhateverGreen) til 10.12.2, but broke with 10.12.3
+* DRM requiere una dGPU compatible
+  * Refiérete a la [GPU Buyers Guide](https://dortania.github.io/GPU-Buyers-Guide/) para las placas compatibles
+* DRM está rota para sitemas que solo tienen iGPU
+  * Antes se podía arreglar esto con Shiki (ahora WhateverGreen) hasta 10.12.2, pero se rompió esto en 10.12.3
   * This is due to the issue that our iGPUs don't support Apple's firmware and that our [Management Engine](https://en.wikipedia.org/wiki/Intel_Management_Engine) doesn't have Apple's certificate
 * Working hardware acceleration and decoding
 
@@ -61,12 +61,12 @@ If it says failed to inject:
 
 Main places you can check as to why:
 
-* **Injection order**: Make sure that Lilu is above AppleALC in kext order
-* **All kexts are latest release**: Especially important for Lilu plugins, as mismatched kexts can cause issues
+* **Orden de inyección**: Make sure that Lilu is above AppleALC in kext order
+* **Todas las kexts son la versión más reciente**: Especialmente importante para los plugins de Lilu, dado que kexts incompatibles pueden causar problemas
 
-Note: To setup file logging, see [OpenCore Debugging](https://dortania.github.io/OpenCore-Install-Guide/troubleshooting/debug.html).
+Nota: Para configurar file logging, dirígete a [OpenCore Debugging](https://dortania.github.io/OpenCore-Install-Guide/troubleshooting/debug.html).
 
-**Note**: On macOS 10.15 and newer, AppleGVA debugging is disabled by default, if you get a generic error while running VDADecoderChecker you can enable debugging with the following:
+**Nota**: En macOS 10.15 y posterior, AppleGVA debugging is disabled by default, if you get a generic error while running VDADecoderChecker you can enable debugging with the following:
 
 ```
 defaults write com.apple.AppleGVA enableSyslog -boolean true
@@ -82,29 +82,29 @@ defaults delete com.apple.AppleGVA enableSyslog
 
 So before we get too deep, we need to go over some things, mainly the types of DRM you'll see out in the wild:
 
-**FairPlay 1.x**: Software based DRM, used for supporting legacy Macs more easily
+**FairPlay 1.x**: DRM basado en software, usado para facilitar la compatibilidad con los Macs legacy
 
-* Easiest way to test this is by playing an iTunes movie: [FairPlay 1.x test](https://drive.google.com/file/d/12pQ5FFpdHdGOVV6jvbqEq2wmkpMKxsOF/view)
-  * FairPlay 1.x trailers will work on any configuration if WhateverGreen is properly set up - including iGPU-only configurations. However, FairPlay 1.x *movies* will only play on iGPU-only configurations for around 3-5 seconds, erroring that HDCP is unsupported afterwards.
+* La manera más fácil de test this es reproducir una peli de iTunes: [FairPlay 1.x test](https://drive.google.com/file/d/12pQ5FFpdHdGOVV6jvbqEq2wmkpMKxsOF/view)
+  * Trailers de FairPlay 1.x funcionan con cualquier configuraciónn si WhateverGreen está configurada correctamente - including iGPU-only configurations. Sin embargo, *películas* de FairPlay 1.x *movies* se reproducen para solamente 3-5 segundos en configuraciones que solamente usan iGPU, erroring that HDCP is unsupported afterwards.
 
-**FairPlay 2.x/3.x**: Hardware based DRM, found in Netflix, Amazon Prime
+**FairPlay 2.x/3.x**: DRM basado en hardware, usado por Netflix, Amazon Prime
 
 * There's a couple ways to test:
-  * Play a show in Netflix or Amazon Prime
-  * Play an Amazon Prime trailer: [Spider-Man: Far From Home](https://www.amazon.com/Spider-Man-Far-Home-Tom-Holland/dp/B07TP6D1DP)
-    * Trailer itself does not use DRM but Amazon still checks before playing
-* Note: Requires newer AMD GPU to work (Polaris+)
+  * Reprocucir un programa en Netflix o Amazon Prime
+  * Reproducir un tráiler de Amazon Prime: [Spider-Man: Far From Home](https://www.amazon.com/Spider-Man-Far-Home-Tom-Holland/dp/B07TP6D1DP)
+    * Aunque el tráiler no usa DRM, Amazon lo verifica antes de reproducir
+* Nota: Requiere una GPU nueva de AMD para funcionar (Polaris+)
 
-**FairPlay 4.x**: Mixed DRM, found on AppleTV+
+**FairPlay 4.x**: DRM mixta, encontrado en AppleTV+
 
-* You can open TV.app, choose TV+ -> Free Apple TV+ Premieres, then click on any episode to test without any trial (you do need an iCloud account)
-* Apple TV+ also has a free trial if you want to use it
-* Note: Requires either an absent iGPU (Xeon) or newer AMD GPU to work (Polaris+)
-  * Possible to force FairPlay 1.x when iGPU is absent
+* Puedes abrir TV.app, selecciona TV+ -> Free Apple TV+ Premieres, y luego cliquear cualquier episodio para test without any trial (aunque necesitas una cuenta de iCloud)
+* Apple TV+ también tiene una free trial si la quieres usar
+* Nota: Requiere que no haya ninguna iGPU (Xeon) o un GPU nueva de AMD GPU para funcionar (Polaris+)
+  * Es posible to force FairPlay 1.x when iGPU is absent
 
 If everything works on these tests, you have no need to continue! Otherwise, proceed on.
 
-## Fixing DRM
+## Arreglar DRM
 
 So for fixing DRM we can go down mainly 1 route: patching DRM to use either software or AMD decoding. Vit made a great little chart for different hardware configurations:
 
@@ -122,12 +122,12 @@ Here's one example. If we have an Intel i9-9900K and an RX 560, the configuratio
 
 Here's another example. This time, We have an Ryzen 3700X and an RX 480. Our configuration in this case is just "AMD", and we should be using either an iMac Pro or Mac Pro SMBIOS. Again, there are two options: no shiki arguments, and `shikigva=128`. We prefer hardware decoding over software decoding, so we'll choose the `shikigva=128` option, and again inject `shikigva` into our dGPU, this time with value `128`. A reboot and DRM works.
 
-**Notes:**
+**Notas:**
 
-* You can use [gfxutil](https://github.com/acidanthera/gfxutil/releases) to find the path to your iGPU/dGPU.
-  * `path/to/gfxutil -f GFX0`
-  * `GFX0`: For dGPUs, if multiple installed check IORegistryExplorer for what your AMD card is called
-  * `IGPU`: For iGPU
+* Puedes usar [gfxutil](https://github.com/acidanthera/gfxutil/releases) para encontrar la dirección de tu iGPU/dGPU.
+  * `dirección/para/gfxutil -f GFX0`
+  * `GFX0`: Para dGPUs, if multiple installed check IORegistryExplorer for what your AMD card is called
+  * `IGPU`: Para iGPU
 * If you inject `shikigva` using DeviceProperties, ensure you only do so to one GPU, otherwise WhateverGreen will use whatever it finds first and it is not guaranteed to be consistent.
 * IQSV stands for Intel Quick Sync Video: this only works if iGPU is present and enabled and it is set up correctly.
 * Special configurations (like Haswell + AMD dGPU with an iMac SMBIOS, but iGPU is disabled) are not covered in the chart. You must do research on this yourself.
