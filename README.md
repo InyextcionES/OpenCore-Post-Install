@@ -1,80 +1,80 @@
 # OpenCore Post-Install
 
-!Bienvenido a la OpenCore Post-Install guide! Please note that if you have not installed macOS yet, te recomendamos que sigas nuestra guía de instalación:
+¡Bienvenido a la guía de post instalación de OpenCore! Por favor ten en cuenta de que si no has instalado macOS aún, te recomendamos que sigas nuestra guía de instalación:
 
-* [OpenCore Install Guide](https://inyextciones.github.io/OpenCore-Install-Guide/)
+* [Guía de instalación de OpenCore](https://inyextciones.github.io/OpenCore-Install-Guide/)
 
-And while the info here can be applied to both OpenCore and Clover, principalmente nos fijamos en las instalaciones de OpenCore. So you will need to research a bit more if you run into any issues.
+Por más que la información mostrada en esta guía puede ser aplicada para ambos OpenCore y Clover, principalmente nos centraremos en las instalaciones de OpenCore. Tendrás que buscar un poco más si te encuentras con problemas.
 
 ## Cómo seguir esta guía
 
-Para empezar, not every section in this guide must be complete. It's up to each user whether they feel they want to add the finishing touches or resolve certain issues
+Para empezar, no todas las secciones en esta guía deben ser completadas. Está en cada usuario el querer o no agregar los retoques finales o resolver ciertos problemas.
 
-Esta guía es dividida entre 6 partes:
+Esta guía está dividida en 6 partes:
 
 * [Universal](#universal)
-  * All users are recommended to follow
+  * Es recomendado que todos los usuarios sigan esta guía
 * [Arreglos para USB](#arreglos-para-usb)
-  * All users are recommended to follow as well
-* [Laptop Specifics](#laptop-specifics)
-  * Laptop users are recommended to follow in addition to the above
+  * De nuevo, es recomendado que todos los usuarios sigan esta guía
+* [Específicos de laptops](#laptop-specifics)
+  * Es recomendado para los usuarios de laptops además de las guías anteriores. 
 * [Cosméticos](#cosméticos)
-  * Cosmetics like OpenCore GUI and removing verbose screen output durante el arranque
+  * Cosméticos como el GUI de OpenCore y sacar la pantalla verbose durante el arranque
 * [Multiboot](#multiboot)
   * Recomendaciones para users que hacen multiboot
 * [Misceláneo](#misceláneo)
-  * Otros arreglos misceláneos, not all users will require these fixes
+  * Otros arreglos misceláneos, no todo los usuarios requieren de estos.
 
 ### Universal
 
 * [Seguridad y FileVault](./universal/security.md)
-  * Para los a quienes le importen la seguridad y privacidad.
+  * Para los a quienes les importa la seguridad y privacidad.
 * [Arreglar Audio](./universal/audio.md)
   * Para los que necesiten ayuda en resolver problemas del audio.
 * [Arrancar sin USB](./universal/oc2hdd.md)
-  * Te deja arrancar OpenCore sin la USB conectada.
+  * Te deja arrancar OpenCore sin tu USB conectado.
 * [Actualizar OpenCore, kexts y macOS](./universal/update.md)
-  * Comó atualizar tus kexts, OpenCore y macOS seguramente.
-* [Arreglar DRM](./universal/drm.md)
+  * Comó atualizar tus kexts, OpenCore y macOS.
+* [Arreglar el DRM](./universal/drm.md)
   * Para los con problemas de DRM como la reproducción de Netflix.
 * [Arreglar iServices](./universal/iservices.md)
-  * Información para arreglar los iServices issues como iMessage.
-* [Fixing Power Management](./universal/pm.md)
-  * Fixes and helps improve both hardware idle and boosting states.
+  * Información para arreglar los iServices (iMessage, Facetime, etc.)
+* [Arreglar la administración de energía](./universal/pm.md)
+  * Ayuda a mejorar el rendimiento de tu hardware cuando está/no está siendo siendo estresado.
 * [Arreglar Suspensión](./universal/sleep.md)
-  * Varias cosas que revisar cuando arreglas la suspensión.
+  * Varias cosas que revisar para arreglar la suspensión de tu sistema.
 * [Arreglar USB](./usb/README.md)
-  * Arreglos para problemas de USB como puertos desaparecidos y helping with sleep.
+  * Arreglos para problemas de USB como puertos que no aparecen. Arreglar esto también puede reparar ciertos aspectos de la suspensión del sistema.
 
 ### Arreglos para USB
 
 * [USB Mapping: Introducción](./usb/README.md)
-  * Starting point for correcting tu USB
+  * Punto de comienzo para corregir tus USBs
 
 ### Laptop Specifics
 
 * [Arreglar los Read-outs de la Batería](./laptop-specific/battery.md)
-  * Si tu batería no es compatible out of the box con SMCBatteryManager.
+  * Si tu batería no es compatible directamente con SMCBatteryManager.
 
 ### Cosméticos
 
 * [Add GUI and Boot-chime](./cosmetic/gui.md)
-  * Add a fancy GUI to OpenCore and even a boot chime!
+  * Agrega una GUI a OpenCore e incluso un chime de arranque
 * [Fixing Resolution y Verbose](./cosmetic/verbose.md)
-  * Helps arreglar la resolución de OpenCore, and allows you to get that sweet Apple logo while booting!
+  * Ayuda a arreglar la resolución de OpenCore, y te permite ver el logo de Apple al arrancar!
 
 ### Multiboot 
 
 * [Configurar Bootstrap.efi](./multiboot/bootstrap.md)
-  * Asegura que Windows no elimine OpenCore from nuestro sistema.
+  * Asegura que Windows no elimine OpenCore de nuestro sistema.
 * [Instalar BootCamp](./multiboot/bootcamp.md)
-  * Nos deja instalar Bootcamp for easy boot switching.
+  * Nos deja instalar Bootcamp para cambiar el SO fácilmente.
 
 ### Misceláneo
 
 * [Arreglar RTC](./misc/rtc.md)
-  * Ayuda a resolver problemas de RTC/CMOS/safe-mode reboot.
+  * Ayuda a resolver problemas de reinicio con RTC/CMOS/safe-mode.
 * [Arreglar CFG Lock](./misc/msr-lock.md)
   * Nos deja desactivar algunos parches del kernel para mejor estabilidad
 * [NVRAM Emulada](./misc/nvram.md)
-  * Para usarios que tienen NVRAM rota, or need to test it.
+  * Para usarios que tienen NVRAM rota, o necesitan probarla.
