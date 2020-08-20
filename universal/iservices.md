@@ -1,106 +1,106 @@
-# Fixing iMessage and other services with OpenCore
+# Arreglar iMessage y otros servicios con OpenCore
 
 
 
 
 
-This page is for those having iMessage and other iServices issues, this is a very basic guide so will not go as in-depth into the issues as some other guides. This specific guide is a translation and reinterpretation of the AppleLife Guide on fixing iServices: [Как завести сервисы Apple - iMessage, FaceTime, iCloud](https://applelife.ru/posts/727913)
+Esta página es para ellos que tienen problemas con iMessage y otros iServices, esta es una guía muy básica así que no will go as in-depth into the issues as some other guides. This specific guide is a translation and reinterpretation of the AppleLife Guide on fixing iServices: [Как завести сервисы Apple - iMessage, FaceTime, iCloud](https://applelife.ru/posts/727913)
 
-**Note**: You and you alone are responsible for your AppleID, read the guide carefully and take full responsibility if you screw up. Dortania and other guides are not held accountable for what **you** do.
+**Nota**: Tú y solamente tú sos responsable para tu AppleID, lee la guía con mucho cuidado and take toda la responsibilidad if you screw up. Dortania y otras guías no son responsables por lo que haces **tu**.
 
-## Generate a new Serial
+## Generar un nuevo Serial
 
-Download [GenSMBIOS](https://github.com/corpnewt/GenSMBIOS) and select option 1 to download MacSerial and next option 3 to generate some new serials. What we're looking for is a valid serial that currently has no registered purchase date.
+Descarga [GenSMBIOS](https://github.com/corpnewt/GenSMBIOS) y selcciona opcíon 1 para descargar MacSerial y despues la 3a opción 3 to para generar unos nuevos serials. Lo que buscamos es un serial válido que actualmente no tiene una registered purchase date.
 
 Tip: `iMacPro1,1 10` will print 10 serials, this will save you some time on generating
 
 ![](../images/post-install/iservices-md/serial-list.png)
 
-Now enter the serial into the [Apple Check Coverage page](https://checkcoverage.apple.com/), you will get 1 of 3 responses:
+Ahora digita el serial en la [Apple Check Coverage page](https://checkcoverage.apple.com/), vas a conseguir 1 de 3 respuestas:
 
 We’re sorry, but this serial number isn’t valid |  Valid Purchase date | Purchase Date not Validated
 :-------------------------:|:-------------------------:|:-------------------------:
 ![](../images/post-install/iservices-md/not-valid.png) | ![](../images/post-install/iservices-md/valid.png) |  ![](../images/post-install/iservices-md/no-purchase.png)
 
-This last one is what we're after, as we want something genuine but currently not in use by anyone. Now we can translate the rest of the values into our config.plist -> PlatformInfo -> Generic:
+La última es la que queremos, ya que queremos un serial verdadero que actualmente no le pertence a nadie. Ahora podemos agregar the rest of the values a nuestra config.plist -> PlatformInfo -> Generic:
 
 * Type = SystemProductName
 * Serial = SystemSerialNumber
 * Board Serial = MLB
 * SmUUID = SystemUUID
 
-**Note**:  "We’re sorry, but this serial number isn’t valid. Please check your information and try again." works for many users as well, do note though if you've had a bad track record with Apple/iServices you many need one that's "Purchase Date not Validated". Otherwise there may be suspicion
+**Nota**:  "We’re sorry, but this serial number isn’t valid. Please check your information and try again." funciona para muchos usarios también, pero ten en cuenta que si you've had a bad track record with Apple/iServices es probable que necesitas una serie con "Purchase Date not Validated". Otherwise there may be suspicion
 
-**Note 2**: Using a "Purchase Date not Validated:" can cause issues down the line if another machine of the same serial ever gets activated, for initial setup it can help alleviate issues with your account but in the long run an invalid serial can be a safer choice.
+**Nota 2**: Usar un serial con "Purchase Date not Validated:" puede causar problemas más adelante si otra sistema del misma serial ever sea activada, for initial setup it can help alleviate issues with your account but in the long run un serial inválido puede ser la opción más segura.
 
-**Note3**: Checking too many serials may result in your access being denied to Apple Check Coverage page, to bypass this limitation it's advised to use a VPN or [tor browser](https://www.torproject.org/download/) or any other service that allows you to change/mask your IP address.
+**Nota 3**: Digitar demasiados serials may result in your access being denied to Apple Check Coverage page, para evitar esta limitación it's advised to use a VPN o [tor browser](https://www.torproject.org/download/) o cualquier servicio que te deja cambiar/esconder tu dirección IP.
 
-## Fixing En0
+## Arreglar En0
 
-To start, grab [Hackintool](https://www.tonymacx86.com/threads/release-hackintool-v3-x-x.254559/) ([Github link](https://github.com/headkaze/Hackintool)) and head to System -> Peripherals (Info -> Misc on older versions of Hackintool)
+Para empezar, descarga [Hackintool](https://www.tonymacx86.com/threads/release-hackintool-v3-x-x.254559/) ([Github link](https://github.com/headkaze/Hackintool)) y vete para System -> Peripherals (Info -> Misc en versiones más antiguas de Hackintool)
 
-Here under Network Interfaces (network card icon), look for `en0` under `BSD` and check whether the device has a check mark under Builtin. If there is a check mark, skip to Fixing ROM section otherwise continue reading.
+Aquí en Network Interfaces (ícono de una tarjeta NIC), busca `en0` en `BSD` y check si el dispostivo tiene un check mark under Builtin. If there is a check mark, salta a la sección Arreglar ROM otherwise continue reading.
 
-* **Note**: en0 can be either Wifi, ethernet or even Thunderbolt.
+* **Nota**: en0 puede ser either Wifi, ethernet or even Thunderbolt.
 
-> What if I don't have En0 at all?!?
+> ¿!¿!Y si yo no tengo En0?!?
 
-Well, we'll want to reset macOS so it can build the interfaces fresh, open terminal and run the following:
+Entonces, queremos resetear macOS así que puede reconstruir las interfaces, abre la terminal y corre lo siguiente:
 
 ```
 sudo rm /Library/Preferences/SystemConfiguration/NetworkInterfaces.plist
 sudo rm /Library/Preferences/SystemConfiguration/preferences.plist
 ```
 
-Once done reboot and check again.
+Cuando lo hayas hecho, reinicia la compu y revísalo de nuevo.
 
-If this doesn't work, add [NullEthernet.kext](https://bitbucket.org/RehabMan/os-x-null-ethernet/downloads/) and [ssdt-rmne.aml](https://github.com/RehabMan/OS-X-Null-Ethernet/blob/master/ssdt-rmne.aml) to your EFI and config.plist under Kernel -> Add and ACPI -> Add respectively. The SSDT is precompiled so no extra work needed, reminder compiled files have a .aml extension and .dsl can be seen as source code.
+Si esto no funciona, agrega [NullEthernet.kext](https://bitbucket.org/RehabMan/os-x-null-ethernet/downloads/) y [ssdt-rmne.aml](https://github.com/RehabMan/OS-X-Null-Ethernet/blob/master/ssdt-rmne.aml) a tu EFI y config.plist en Kernel -> Add and ACPI -> Add respectively. La SSDT ya esta compilada así que no tienes que hacer nada más, reminder que los archivos compilados tienen la extensión .aml y los con .dsl son source code.
 
 ![Find if set as Built-in](../images/post-install/iservices-md/en0-built-in-info.png)
 
-Now head under the PCI tab of Hackintool and export your PCI DeviceProperties, this will create a pcidevices.plist on your desktop
+Ahora vete a la pestaña PCI de Hackintool y exportar tus PCI DeviceProperties, esto creará una pcidevices.plist en tu escritorio
 
-![Export PCI address](../images/post-install/iservices-md/hackintool-export.png)
+![Exporta PCI address](../images/post-install/iservices-md/hackintool-export.png)
 
-Now search through the pcidevices.plist and find the PciRoot of your ethernet controller. For us, this would be `PciRoot(0x0)/Pci(0x1f,0x6)`
+Ahora buscar en la pcidevices.plist y encontrar la PciRoot de tu controlador de ethernet. Para nosotros, esto sería `PciRoot(0x0)/Pci(0x1f,0x6)`
 
-![Copy PciRoot](../images/post-install/iservices-md/find-en0.png)
+![Copia PciRoot](../images/post-install/iservices-md/find-en0.png)
 
-Now with the PciRoot, go into your config.plist -> DeviceProperties -> Add and apply the property of `built-in` with type `Data` and value `01`
+Ahora con la PciRoot, en tu config.plist -> DeviceProperties -> Add y apply the property `built-in` con el type `Data` y value `01`
 
-![Add to config.plist](../images/post-install/iservices-md/config-built-in.png)
+![Agrega a config.plist](../images/post-install/iservices-md/config-built-in.png)
 
-## Fixing ROM
+## Arreglar ROM
 
-This is a section many may have forgotten about but this is found in your config.plist under PlatformInfo -> generic -> ROM
+Esta es una sección que se les han olvidado a muchos, pero se encuentra en tu config.plist en PlatformInfo -> generic -> ROM
 
-To find your actual MAC Address/ROM value, you can find in a couple places:
+Para encontrar tu real MAC Address/ROM value, puedes buscarlo en varios lugares:
 
 * BIOS
 * macOS: System Preferences -> Network -> Ethernet -> Advanced -> MAC Address
 * Windows: Settings -> Network & Internet -> Ethernet -> Ethernet -> Physical MAC Address
 
-* **Note**: en0 can be either Wifi, ethernet or even Thunderbolt, adapt the above example to your situation.
+* **Nota**: en0 puede ser either Wifi, ethernet or even Thunderbolt, adapt the above example to your situation.
 
-Some users have even gone as far as using real Apple MAC Address dumps for their config, for this guide we'll be using our real MAC Address but note that this is another option.
+Algunos usarios have even gone as far as using real Apple MAC Address dumps para sus configs, para esta guía vamos a usar nuestra MAC Address verdadera pero ten en cuenta que esta es otra opción disponible.
 
-When adding this to your config, `c0:7e:bf:c3:af:ff` should be converted to `c07ebfc3afff` as the `Data` type cannot accept colons(`:`).
+Cuando la agregas a la config, `c0:7e:bf:c3:af:ff` tiene que ser escrita como `c07ebfc3afff` ya que el tipo `Data` cannot accept colons(`:`).
 
 ![](../images/post-install/iservices-md/config-rom.png)
 
-## Verifying NVRAM
+## Verificar NVRAM
 
-Something that many forget about iServices is that NVRAM is crucial to getting it working correctly, the reason being is that iMessage keys and such are stored in NVRAM. Without NVRAM, iMessage can neither see nor store keys.
+Algo más que se les olviden a muchos usarios de los iServices es que la NVRAM es crucial para su función, la razón por la que es que la llaves/claves de iMessage etc son guardadas en la NVRAM. Sin NVRAM, iMessage no puede ver ni guardar las claves.
 
-So we'll need to verify NVRAM works, regardless if "it should work" as some firmwares can be more of a pain than others.
+Entonces tenemos que verificar si la NVRAM funciona, regardless if "it should work" as some firmwares can be more of a pain than others.
 
-Please refer to the [Emulated NVRAM](../misc/nvram.md) section of the OpenCore Guide for both testing if you have working NVRAM and emulating it if you don't.
+Por favor refiérete a la sección [NVRAM Emulada](../misc/nvram.md) de la guía de OpenCore para verificar si tienes NVRAM funcionando y cóno emularla si está rota.
 
-## Clean out old attempts
+## Limpiar intentos anteriores
 
-This is important for those who've tried setting up iMessage but failed, to start make sure your NVRAM has been cleared. You can enable the option in the boot picker in your config under config.plist -> Misc -> Security -> AllowNvramReset.
+Esto es importante para ellos que ya intentaron a configurar iMessage but failed, para empezar make sure your NVRAM has been cleared. Puedes activar esta opción en el bootpicker en tu config en config.plist -> Misc -> Security -> AllowNvramReset.
 
-Next open terminal and run the following:
+Luego abre la terminal y corre lo siguiente:
 
 ```
 sudo rm -rf ~/Library/Caches/com.apple.iCloudHelper*
@@ -122,15 +122,15 @@ sudo rm -rf ~/Library/Messages
 
 ## Verifying your work one last time
 
-Grab [macserial](https://github.com/acidanthera/MacInfoPkg/releases) and run the following:
+Descarga [macserial](https://github.com/acidanthera/MacInfoPkg/releases) y corre lo siguiente:
 
 ```
-path/to/macserial -s
+dirección/para/macserial -s
 ```
 
 This will provide us with a full rundown of our system, verify that what is presented matches up with your work.
 
-## Cleaning up your AppleID
+## Limpiar tu AppleID
 
 * Remove all devices from your AppleID: [Manage your devices](https://appleid.apple.com/account/manage)
 * Enable 2 Factor-Auth
