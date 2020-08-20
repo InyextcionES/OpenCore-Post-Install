@@ -1,4 +1,4 @@
-# OpenCore Post-Install
+# Post instalación de OpenCore
 
 ¡Bienvenido a la guía de post instalación de OpenCore! Por favor ten en cuenta de que si no has instalado macOS aún, te recomendamos que sigas nuestra guía de instalación:
 
@@ -51,7 +51,7 @@ Esta guía está dividida en 6 partes:
 * [USB Mapping: Introducción](./usb/README.md)
   * Punto de comienzo para corregir tus USBs
 
-### Laptop Specifics
+### Específicos de laptops
 
 * [Arreglar los Read-outs de la Batería](./laptop-specific/battery.md)
   * Si tu batería no es compatible directamente con SMCBatteryManager.
