@@ -2,12 +2,12 @@
 
 
 
-So a neat feature of OpenCore is the ability to avoid the BIOS entirely and usar Startup disk solamente para multiboot. Problem comes in when we try to boot windows and have no way of setting the boot option back to macOS. That's where the BootCamp utilities come in.
+So a neat feature of OpenCore is the ability de evitar la BIOS completamanete y usar Startup disk solamente para multiboot. Encontramos un problem cuando intentamos a arrancar Windows y tenemos ninguna manera setting the boot option back to macOS. That's where the BootCamp utilities come in.
 
-* Note: This guide will not cover the creation of the Windows installer, only the installation of BootCamp drivers.
+* Nota: Esta guía no cubre la creatción del instalador de Windows, solamente la instalación de los drivers de BootCamp.
   * Ejemplo de la creación de un instalador de Windows: [Build a Bootable Windows ISO](https://www.freecodecamp.org/news/how-make-a-windows-10-usb-using-your-mac-build-a-bootable-iso-from-your-macs-terminal/)
   * Reminder: Windows **DEBE** ser basado en GPT/GUID, OpenCore nunca arrancará legacy installs
-* Note 2: Usar las utilidades de BootCamp desde macOS eliminará EFI/BOOT/BOOTx64.efi en tu EFI, que se necesita para bootear OpenCore. And OpenCore itself does not support MBR based installs so the utility is useless to us
+* Nota 2: Usar las utilidades de BootCamp desde macOS eliminará EFI/BOOT/BOOTx64.efi en la EFI, que se necesita para bootear OpenCore. And OpenCore itself does not support MBR based installs so the utility is useless to us
 
 ## Preparación
 

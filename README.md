@@ -1,6 +1,6 @@
 # Post Instalación de OpenCore
 
-¡Bienvenido a la guía de Post Instalación de OpenCore! Por favor ten en cuenta de que si no has instalado macOS aún, te recomendamos que sigas nuestra guía de instalación:
+¡Bienvenido a la Guía de Post Instalación de OpenCore! Por favor ten en cuenta de que si no has instalado macOS aún, te recomendamos que sigas nuestra Guía de Instalación:
 
 * [Guía de instalación de OpenCore](https://inyextciones.github.io/OpenCore-Install-Guide/)
 
@@ -58,9 +58,9 @@ Esta guía está dividida en 6 partes:
 
 ### Cosméticos
 
-* [Add GUI and Boot-chime](./cosmetic/gui.md)
+* [Agregar una GUI y el Sonido el Arranque](./cosmetic/gui.md)
   * Agrega una GUI a OpenCore e incluso un chime de arranque
-* [Fixing Resolution y Verbose](./cosmetic/verbose.md)
+* [Arreglar Resolución y Verbose](./cosmetic/verbose.md)
   * Ayuda a arreglar la resolución de OpenCore, y te permite ver el logo de Apple al arrancar!
 
 ### Multiboot 

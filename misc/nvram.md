@@ -4,20 +4,20 @@
 
 
 
-Esta sección es para los que no tienen NVRAM nativo. El hardware más común que tiene NVRAM incompatible con macOS son X99 y ciertos chipsets de la serie X299:
+Esta sección es para los que no tienen NVRAM nativa. El hardware más común que tiene NVRAM incompatible con macOS es X99 y ciertos chipsets de la serie X299:
 
 * X99
 * X299
 
-Para B360, B365, H310, H370, Z390, usen [SSDT-PMC](https://dortania.github.io/Getting-Started-With-ACPI/) y ponerlo en EFI/OC/ACPI y config.plist -> ACPI -> Add. Para más información about crear y compilar los SSDTs, dirígete a [**Getting started with ACPI**](https://dortania.github.io/Getting-Started-With-ACPI/)
+Para B360, B365, H310, H370, Z390, usa [SSDT-PMC](https://dortania.github.io/Getting-Started-With-ACPI/) y ponlo en EFI/OC/ACPI y config.plist -> ACPI -> Add. Para más información de crear y compilar las SSDTs, dirígete a [**Getting started with ACPI**](https://dortania.github.io/Getting-Started-With-ACPI/)
 
-**Note**: CPUs de la 10a generación no necesitan esta SSDT
+**Nota**: CPUs de la 10a generación no necesitan esta SSDT
 
-## Cleaning out the Clover gunk
+## Eliminar la basura de Clover
 
-So some may not have noticed but Clover may have installed RC scripts into macOS for proper NVRAM emulation. Esto es un problema ya que it conflicts con la emulación de OpenCore.
+So some may not have noticed pero Clover ha instalado scripts RC en macOS para emulación de NVRAM. Esto es un problema ya que crea conflicto con la emulación de OpenCore.
 
-Files to delete:
+Archivos que eliminar:
 
 * `/Volumes/EFI/EFI/CLOVER/drivers64UEFI/EmuVariableUefi-64.efi`
 * `/Volumes/EFI/nvram.plist`
@@ -27,14 +27,14 @@ Files to delete:
 * `/etc/rc.boot.d/70.disable_sleep_proxy_client.local.disabled`
 * `/etc/rc.shutdown.d/80.save_nvram_plist.local​`
 
-If folders are empty then delete them as well:
+Si estas carpetas son vacias, elimínalas también:
 
 * `/etc/rc.boot.d`
 * `/etc/rc.shutdown.d​`
 
-## Verifying if you have working NVRAM
+## Verificar si la NVRAM funciona
 
-Para empezar, abre la terminal y corre the following one line at a time:
+Para empezar, abre la terminal y corre estás líneas una a una:
 
 ```sh
 sudo -s
@@ -49,9 +49,9 @@ Ahora reinicía y corre esto:
 nvram -p | grep -i myvar
 ```
 
-If nothing returns then your NVRAM is not working. If a line containing `myvar test` returns, la NVRAM funciona.
+Si no returns nada, tu NVRAM no funciona. Si una línea con `myvar test` returns, la NVRAM funciona.
 
-Note: `nvram -c` requires SIP to be off, an alternative is to wipe NVRAM at the boot menu. Reminder you'll need `Misc -> Security -> AllowNvramReset -> YES`
+Nota: `nvram -c` requiere la SIP desactivada, un alternativo resetear la NVRAM en el menú de boot. Para esto necesitas `Misc -> Security -> AllowNvramReset -> YES`
 
 ## Activar la NVRAM emulada (con nvram.plist)
 
@@ -62,29 +62,29 @@ Para activar la NVRAM emulada, necesitas puestan estas 3 cosas:
 Dentro de la config.plist:
 
 * **Booter**:
-  * `DisableVariableWrite`: set to `NO`
+  * `DisableVariableWrite`: `NO`
 * **Misc -> Security**:
-  * `ExposeSensitiveData`: set to `0x3`
+  * `ExposeSensitiveData`: `0x3`
 * **NVRAM**:
-  * `LegacyEnable`: set to `YES`
-  * `LegacyOverwrite` set to `YES`
-  * `LegacySchema`: NVRAM variables set(OpenCore compares these to the variables present in nvram.plist)
-  * `WriteFlash`: set to `YES`
+  * `LegacyEnable`: `YES`
+  * `LegacyOverwrite`: `YES`
+  * `LegacySchema`: variables de NVRAM puestas(OpenCore compara esta a las variables presente en nvram.plist)
+  * `WriteFlash`: `YES`
 
 Dentro tu EFI:
 
-* `OpenRuntime.efi` driver(this is needed for proper sleep, shutdown and other services to work correctly
+* `OpenRuntime.efi` driver(necesario para que suspensión, shutdown y otros servicios funcionen correctamente
 
-Now grab the ['LogoutHook.command'](https://github.com/acidanthera/OpenCorePkg/releases)(Inside `/Utilities/LogoutHook/`) and place it somewhere safe (e.g. within your user directory, as shown below):
+Ahora descarga la ['LogoutHook.command'](https://github.com/acidanthera/OpenCorePkg/releases)(Dentro `/Utilities/LogoutHook/`) y guardarla somewhere safe (p.ej. en tu user directory, as shown below):
 
-`/Users/(your username)/LogoutHook/LogoutHook.command`
+`/Users/(tu username)/LogoutHook/LogoutHook.command`
 
 Abre la terminal y corre lo siguiente:
 
 `sudo defaults write com.apple.loginwindow LogoutHook /Users/(your username)/LogoutHook/LogoutHook.command`
 
-And voila! Tienes NVRAM emulada!
+¡Y voila! Tienes NVRAM emulada!
 
-Do keep in mind this requires the `nvram` command to support the `-x` flag for this to work correctly which is unavailable on macOS 10.12 and below. If you are installing macOS 10.12 or earlier, you need to copy `nvram.mojave` into the same folder as `LogoutHook.command`, which fixes this by invoking it instead of the system `nvram` command.
+Ten en cuentra que esto requiere que la command `nvram` command sea compatible con el parámetro `-x` para funcionar correctamente, y no es disponible en y macOS 10.12 y anterior. Si vas a instalar macOS 10.12 o anterior, tienes que copiar `nvram.mojave` a la misma carpeta que `LogoutHook.command`, que arregla esto por correr esta sin la command `nvram` del sistema.
 
-Something else to note is that macOS is only able to read nvram.plist but it won't be able to write to nvram.plist unless running the shutdown process. This means running the test above won't work
+Otra cosa que notar es que macOS solo puede read nvram.plist pero no puede write to nvram.plist unless running the shutdown process. Esto significa que correr el test de arriba no funciona

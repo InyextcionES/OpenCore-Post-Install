@@ -4,23 +4,23 @@
 
 
 
-Para empezar, we'll assume que ya tienes Lilu y AppleALC instaladas, si no estés seguro de que hayan cargadas correctamente puedes correr lo siguiente en la terminal(Esto también verifica si AppleHDA está cargada, ya que sin esto AppleALC no tiene nada que parchear):
+Para empezar, suponemos que ya tienes Lilu y AppleALC instaladas, si no estés seguro de que hayan cargadas correctamente puedes correr lo siguiente en la terminal(Esto también verifica si AppleHDA está cargada, ya que sin esto AppleALC no tiene nada que parchear):
 
 ```sh
 kextstat | grep -E "AppleHDA|AppleALC|Lilu"
 ```
 
-If all 3 show up, you're good to go. Y asegúrate de que VoodooHDA **no sea presente**. Esto conflict con AppleALC otherwise.
+Si aparancen todas las 3, estás listo a continuar. Y asegúrate de que VoodooHDA **no sea presente**. Esta kext causa conflicto con AppleALC.
 
 Si encuentras algún problema, dirígete a la [sección Troubleshooting](../universal/audio.md#troubleshooting)
 
 ## Encontrar tu layout ID
 
-Para este ejemplo, we'll assume que tu codec es ALC1220. Para verificar el tuyo, tienes unas opciones:
+Para este ejemplo, suponemos que tu codec es ALC1220. Para verificar el tuyo, tienes varias opciones:
 
 * Revisar la especifacione o el manual del motherboard
 * Revisar Device Manager en Windows
-* Corre `cat` en la terminal en Linux
+* Correr `cat` en la terminal en Linux
   * `cat /proc/asound/card0/codec#0 | less`
 
 Ahora con un codec, queremos cross reference it con la lista de codecs compatibles con AppleALC:
@@ -35,18 +35,18 @@ Con el ALC1220, encontramos lo siguiente:
 
 Esto nos muestra 2 cosas:
 
-* La revisión del hardware que es compatible(`0x100003`), solo relevant when multiple revisiones are listed con layouts diferentes
+* La revisión del hardware que es compatible(`0x100003`), relevante solamente cuando hay multiples revisiones con layouts diferentes
 * Varias layout IDs compatibles con nuestro codec(`layout 1, 2, 3, 5, 7, 11, 13, 15, 16, 21, 27, 28, 29, 34`)
 
 Ahora con una lista de layout IDs compatibles,  estamos listos a probarlos
 
-**Nota**: Si tu Audio Codec es ALC 3XXX es probable que es falso y solamente es un contraldor, do your research para averiguar cuál es el controlador en realidad.
+**Nota**: Si tu Audio Codec es ALC 3XXX es probable que es falso y solamente es un contralador, do your research para averiguar cuál es el controlador en realidad.
 
-* Un example de esto es el ALC3601, pero cuando usamos Linux se muestra el nombre verdadero: ALC 671
+* Un ejemplo de esto es el ALC3601, pero cuando usamos Linux muestra el nombre verdadero: ALC 671
 
 ## Probar tu layout
 
-Para probar nuestros layout IDs, vamos a usar el boot-arg `alcid=xxx` donde xxx es tu layout. Ten en cuenta que hay que probar los layout IDs **uno a uno**. No agregas multiple IDs o alcid boot-args, si uno no funciona entonces probar el próximo ID y etc
+Para probar nuestros layout IDs, vamos a usar el boot-arg `alcid=xxx` donde xxx es tu layout. Ten en cuenta que hay que probar los layout IDs **uno a uno**. No agregas multiples IDs o alcid boot-args, si uno no funciona entonces probar el próximo ID y etc
 
 ```
 config.plist
@@ -66,7 +66,7 @@ Con AppleALC, there's a priority hierarchy con la que las properties son priorit
 2. `alc-layout-id` en DeviceProperties, **se debería usar solamente en hardware de Apple**
 3. `layout-id` en DeviceProperties, **se debería usar en Apple and non-Apple hardware**
 
-Para empezar, tenemos que ver dónde nuestro controlador de audio está ubicada en el PCI map. Para esto, vamos a usar una herramienta handy llamada [gfxutil](https://github.com/acidanthera/gfxutil/releases) y correr esto en la terminal de macOS:
+Para empezar, tenemos que ver dónde nuestro controlador de audio está ubicada en el PCI map. Para esto, vamos a usar una herramienta re útil llamada [gfxutil](https://github.com/acidanthera/gfxutil/releases) y correr esto en la terminal de macOS:
 
 ```sh
 dirección/para/gfxutil -f HDEF
@@ -87,11 +87,11 @@ En este ejemplo, `alcid=11` será either:
 * `layout-id | Data | <0B000000>`
 * `layout-id | Number | <11>`
 
-Note that the final HEX/Data value should be 4 bytes en total(ie. `0B 00 00 00` ), para layout IDs más grandes que 255(`FF 00 00 00`) tienes que acordarte que los bytes son swapped. Así que 256 se convierte a `FF 01 00 00`
+Ten en cuenta que el final valor de HEX/Data value debe ser 4 bytes en total(ie. `0B 00 00 00` ), para layout IDs más grandes que 255(`FF 00 00 00`) tienes que acordarte que los bytes son swapped. Así que 256 se convierte a `FF 01 00 00`
 
 * HEX Swapping and data size can be completely ignored using the Decimal/Number method
 
-**Reminder**: Tu **DEBES** eliminar el boot-arg después, as it will always have the top priority y así que AppleALC ignorará todas las otras entradas como las en DeviceProperties
+**Reminder**: Tu **DEBES** eliminar el boot-arg después, dado que siempre tiene la top priority y así que AppleALC ignorará todas las otras entradas como las en DeviceProperties
 
 ## Problemas misceláneos
 
@@ -99,20 +99,20 @@ Note that the final HEX/Data value should be 4 bytes en total(ie. `0B 00 00 00` 
 
 * Esto es una problema muy común cuando se usa AppleALC con AMD, específicamente no se han hecho ningunos parches para soportar Mic input. De momento, la "mejor" solución es either comprar un DAC/Mic USB o usar el método de VoodooHDA.kext. El problema con VoodooHDA es que es conocida por ser inestable y tener peor calidad de audio que AppleALC
 
-### Same layout ID from Clover doesn't work on OpenCore
+### La layout ID de Clover no funciona en OpenCore
 
-This is likely do to IRQ conflicts, on Clover there's a whole sweep of ACPI hot-patches that are applied automagically. Fixing this is a little bit painful but [SSDTTime](https://github.com/corpnewt/SSDTTime)'s `FixHPET` option can handle most cases.
+Es probable que es por causa de conflictos IRQ. Clover tiene un montón de hot-patches ACPI  que aplica automagicamente. Arreglar esto es un poquito doloroso pero la opción `FixHPET` de [SSDTTime](https://github.com/corpnewt/SSDTTime) puede arreglar la mayoría de estos casos.
 
-For odd cases where RTC and HPET take IRQs from other devices like USB and audio, you can reference the [HP Compaq DC7900 ACPI patch](https://github.com/khronokernel/trashOS/blob/master/HP-Compaq-DC7900/README.md#dsdt-edits) example in the trashOS repo
+Para casos extrannos donde RTC y HPET toman IRQs de otros dispositivos como USB y audio, refiérete a [HP Compaq DC7900 ACPI patch](https://github.com/khronokernel/trashOS/blob/master/HP-Compaq-DC7900/README.md#dsdt-edits) en el repo de trashOS
 
 ### Kernel Panic on power state changes in 10.15
 
-* Enable PowerTimeoutKernelPanic in your config.plist:
+* Activa PowerTimeoutKernelPanic en tu config.plist:
   * `Kernel -> Quirks -> PowerTimeoutKernelPanic -> True`
 
 ## Troubleshooting
 
-So for troubleshooting, we'll need to go over a couple things:
+Para hacer troubleshooting, tenemos que go over varias cosas:
 
 * [Revisar si tienes las kexts correctas](#revisar-si-tienes-las-kexts-correctas)
 * [Verificar si AppleALC está parcheando correctamente](#verificar-si-applealc-está-parcheando-correctamente)
@@ -122,13 +122,13 @@ So for troubleshooting, we'll need to go over a couple things:
 
 ### Revisar si tienes las kexts correctas
 
-Para empezar, we'll assume que ya tienes Lilu y AppleALC instaladas, if you're unsure if it's been loaded correctly puedes correr lo siguiente en la terminal(Esto también revisará si AppleHDA está cargada, ya que sin esto AppleALC no tiene nada que parchear):
+Para empezar, suponemos que ya tienes Lilu y AppleALC instaladas, si no estás seguro de que hayan sido cargadas correctamente puedes correr lo siguiente en la terminal(Esto también revisará si AppleHDA está cargada, ya que sin esto AppleALC no tiene nada que parchear):
 
 ```sh
 kextstat | grep -E "AppleHDA|AppleALC|Lilu"
 ```
 
-Si aparencen estas 3, estás listo para continuar. And make sure VoodooHDA **no es presente**. This will conflict with AppleALC otherwise. Otras kexts que eliminar de tu sistema:
+Si aparencen estas 3, estás listo a continuar. Y asegúrate que VoodooHDA **no es presente**. Esto causa conflictos con AppleALC. Otras kexts que eliminar de tu sistema:
 
 * RealtekALC.kext
 * CloverALC.kext
@@ -145,7 +145,7 @@ Generalmente el mejor punto de comienzo es busacar los logs de OpenCore y ver si
 14:367 00:012 OC: Prelink injection AppleALC.kext () - Success
 ```
 
-If it says failed to inject:
+Si dice que no inyectó:
 
 ```
 15:448 00:007 OC: Prelink injection AppleALC.kext () - Invalid Parameter
@@ -166,7 +166,7 @@ Pues con AppleALC, la manera más fácil de verificar si hizo los parches es ver
 
 Se puede ver en la imagen por encima que tenemos lo siguiente:
 
-* HDEF Device meaning our rename did the job
+* HDEF Device signífica que el rename funcionó
 * AppleHDAController attached meaning Apple's audio kext attached successfully
 * `alc-layout-id` is a property showing our boot-arg/DeviceProperty injection was successful
   * Nota: `layout-id | Data | 07000000` es la default layout, y `alc-layout-id` will override it and be the layout AppleHDA will use
@@ -175,7 +175,7 @@ Nota: **No renombres manualmente tu controlador de audio**, esto puede causar pr
 
 **Más ejemplos**:
 
-Correct layout-id           |  Incorrect layout-id
+layout-id correcta          |  layout-id incorrecta
 :-------------------------:|:-------------------------:
 ![](../images/post-install/audio-md/right-layout.png)  |  ![](../images/post-install/audio-md/wrong-layout.png)
 
