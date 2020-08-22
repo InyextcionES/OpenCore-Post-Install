@@ -22,7 +22,7 @@ We’re sorry, but this serial number isn’t valid |  Valid Purchase date | Pur
 :-------------------------:|:-------------------------:|:-------------------------:
 ![](../images/post-install/iservices-md/not-valid.png) | ![](../images/post-install/iservices-md/valid.png) |  ![](../images/post-install/iservices-md/no-purchase.png)
 
-La última es la que queremos, ya que queremos un serial verdadero que actualmente no le pertence a nadie. Ahora podemos agregar the rest of the values a nuestra config.plist -> PlatformInfo -> Generic:
+La última es la que queremos, ya que queremos un serial verdadero que actualmente no le pertence a nadie. Ahora podemos agregar los otros valores a nuestra config.plist -> PlatformInfo -> Generic:
 
 * Type = SystemProductName
 * Serial = SystemSerialNumber
