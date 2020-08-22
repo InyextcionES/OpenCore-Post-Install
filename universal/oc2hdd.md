@@ -4,19 +4,19 @@
 
 ## Abrir OpenCore desde la USB
 
-Entonces para empezar, primero quermos abrir OpenCore desde nuestro instalador. Para hacer esto, vamos a usar una neat herramienta de CorpNewt llamada [MountEFI](https://github.com/corpnewt/MountEFI)
+Entonces para empezar, primero quermos abrir OpenCore desde nuestro instalador. Para hacer esto, vamos a usar una herramienta útil de CorpNewt que es [MountEFI](https://github.com/corpnewt/MountEFI)
 
-Para este ejemplo, we'll assume que tu USB es nombrada `Install macOS Catalina`:
+Para este ejemplo, suponemos que tu USB es `Install macOS Catalina`:
 
 ![](../images/post-install/oc2hdd-md/usb-mount.png)
 
-Once the EFI's mounted, we'll want to grab our EFI folder on there and keep in a safe place. Luego queremos **ejectar la EFI del disco USB** as having multiple EFIs montadas can confuse macOS sometimes, best practice is to keep only 1 EFI mounted at a time(you can eject just the EFI, the drive itself doesn't need to be removed)
+Con la EFI montada, hacemos un backup de nuestra carpeta EFI. Luego queremos **ejectar la EFI del disco USB** ya que tener varias EFIs montadas puede confundir a macOS, recomendamos que solo tienes 1 EFI montada at the same time(puedes ejectar solamante la EFI, no tienes que desconectar totalmente el disco)
 
 **Nota**: Instaladors hecho con MakeInstall.bat de gibMacOS en Windows will default a un Master Boot Record(MBR) partition map, this means there is no dedicated EFI partition instead being the `BOOT` partition that mounts by default en macOS.
 
 ![](../images/post-install/oc2hdd-md/hdd-mount.png)
 
-Now with this done, vamos a montar nuestro disco de macOS. Con macOS Catalina, en realidad macOS es partitioned entre 2 volumes: System Partition y User Partition. Esto significa que MountEFI may report multiple drives en su picker pero cada partición aún compartirá la misma EFI(La espec UEFI solamente permite 1 EFI por cada disco). Puedes revisar si es el mismo disco por ver disk**X**sY (Y es el número de la partición)
+Now with this done, vamos a montar nuestro disco de macOS. En macOS Catalina, en realidad macOS es partitioned entre 2 volumes: System Partition y User Partition. Esto significa que MountEFI may report multiple drives en su picker pero cada partición aún compartirá la misma EFI(La espec UEFI solamente permite 1 EFI por cada disco). Puedes revisar si es el mismo disco por ver disk**X**sY (Y es el número de la partición)
 
 ![](../images/post-install/oc2hdd-md/hdd-clean.png)
 

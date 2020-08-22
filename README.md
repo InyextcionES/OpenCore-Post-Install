@@ -1,5 +1,7 @@
 # Post Instalación de OpenCore
 
+* **Nota antes de comenzar**: Esta es una traducción no oficial que no está afiliada a [Dortania](https://github.com/dortania), y puede quedar obsoleta fácilmente.
+
 ¡Bienvenido a la Guía de Post Instalación de OpenCore! Por favor ten en cuenta de que si no has instalado macOS aún, te recomendamos que sigas nuestra Guía de Instalación:
 
 * [Guía de instalación de OpenCore](https://inyextciones.github.io/OpenCore-Install-Guide/)

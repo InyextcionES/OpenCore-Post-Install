@@ -134,7 +134,7 @@ This will provide us with a full rundown of our system, verify that what is pres
 
 * Remove all devices from your AppleID: [Manage your devices](https://appleid.apple.com/account/manage)
 * Enable 2 Factor-Auth
-* Remove all iServices from Keychain, some examples:
+* Eliminar todos los iServices desde Keychain, por ejemplo:
 
 ```
 ids: identity-rsa-key-pair-signature-v1

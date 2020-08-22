@@ -73,7 +73,7 @@ El proceso que seguir es así:
 ## Actualizar macOS
 
 * Esto es probablemente el paso más difícil, mantener tu sistema through actualizaciones del SO. Lo importante que tener en cuenta:
-  * With OS updates, asegúrate que todo ha sido actualizado y que tienes algun forma de recovery como TimeMachine o un instalador de macOS más antigua con una EFI que tu sabes funciona correctamante
+  * Para las actulaizaciones del SO, asegúrate que todo ha sido actualizado y que tienes algun forma de recovery como TimeMachine o un instalador de macOS más antigua con una EFI que tu sabes funciona correctamante
   * Hacer un poquito de google-fu para ver si otros encuentran problemas con la actualizacion más nueva
 
 * I've also provided a bit more of a detailed map of what's changed in macOS versions, see below:

@@ -15,11 +15,11 @@ Guía movida aquí: [Renaming GPUs](https://dortania.github.io/Getting-Started-W
 
 Esta sección es para usarios usando motherboards de la "true" serie 300( B360, B365, H310, H370, Z390) que tienen problemas con usar pantallas conectadas a la iGPU.
 
-So to get started I'll assume que ya has hecho basic framebuffer patches en tu config desde la [sección Coffee Lake de la guía](https://inyextciones.github.io/OpenCore-Install-Guide/config.plist/coffee-lake.html), debería ser algo así:
+Para empezar supongo que ya has hecho unos básicos parches del framebuffer en tu config desde la [sección Coffee Lake de la guía](https://inyextciones.github.io/OpenCore-Install-Guide/config.plist/coffee-lake.html), debería ser algo así:
 
 ![](../images/extras/gpu-patches-md/prereq.png)
 
-* **Nota**: Con macOS 10.15.5, there seems to be a lot of issues with black screen using `07009B3E`, if you get similar issues try swapping to `00009B3E`
+* **Nota**: En macOS 10.15.5, hay muchas problemas que causan una pantalla negra si usas `07009B3E`, si tienes estos problemas usa `00009B3E`
 
 Now that we're prepped, we can start looking into busID patching. Checking the dumps on [InsanelyMac](https://www.insanelymac.com/forum/topic/334899-intel-framebuffer-patching-using-whatevergreen/) shows us this for the `3E9B0007` ID(Desktop UHD 630):
 
