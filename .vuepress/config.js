@@ -84,7 +84,7 @@ module.exports = {
             ]
         },],
         sidebar: [{
-            title: 'Introduction',
+            title: 'Introducción',
             collapsable: false,
             sidebarDepth: 1,
             children: [
@@ -97,23 +97,23 @@ module.exports = {
             collapsable: false,
             sidebarDepth: 2,
             children: [
-                ['/universal/security', 'Security and FileVault'],
-                ['/universal/audio', 'Fixing Audio'],
-                ['/universal/oc2hdd', 'Booting without USB'],
-                ['/universal/update', 'Updating OpenCore, kexts and macOS'],
-                ['/universal/drm', 'Fixing DRM'],
-                ['/universal/iservices', 'Fixing iServices'],
-                ['/universal/pm', 'Fixing Power Management'],
-                ['/universal/sleep', 'Fixing Sleep'],
+                ['/universal/security', 'Seguridad y FileVault'],
+                ['/universal/audio', 'Arreglar Audio'],
+                ['/universal/oc2hdd', 'Arrancar sin USB'],
+                ['/universal/update', 'Actualizar OpenCore, kexts y macOS'],
+                ['/universal/drm', 'Arreglar el DRM'],
+                ['/universal/iservices', 'Arreglar iServices'],
+                ['/universal/pm', 'Arreglar la administración de energía'],
+                ['/universal/sleep', 'Arreglar Suspensión'],
             ]
         },
 		{
-            title: 'USB Fixes',
+            title: 'Arreglos para USB',
             collapsable: false,
             sidebarDepth: 1,
             children: [
-            	['/usb/', 'USB Mapping: Introduction'],
-				['/usb/system-preparation', 'System Preparation'],
+            	['/usb/', 'USB Mapping: Introducción'],
+				['/usb/system-preparation', 'Preparación del Sistema'],
 				{
 	            title: 'USB Mapping',
 	            collapsable: true,
@@ -124,7 +124,7 @@ module.exports = {
 	            ]
 				},
 				{
-	            title: 'Miscellaneous Fixes',
+	            title: 'Arreglos Misceláneos',
 	            collapsable: true,
 	            sidebarDepth: 1,
 	            children: [
@@ -137,7 +137,7 @@ module.exports = {
             ]
 		},
         {
-            title: 'Laptop Specifics',
+            title: 'Específicos de Laptops',
             collapsable: false,
             children: [
                 ['/laptop-specific/battery', 'Fixing Battery Read-outs'],
@@ -145,28 +145,28 @@ module.exports = {
             ]
         },
         {
-            title: 'Cosmetics',
+            title: 'Cosméticos',
             collapsable: false,
             children: [
                 ['/cosmetic/verbose', 'Fixing Resolution and Verbose'],
-                ['/cosmetic/gui', 'Add GUI and Boot-chime'],
+                ['/cosmetic/gui', 'Agregar una GUI y el Boot-chime'],
             ]
         },
         {
             title: 'Multiboot',
             collapsable: false,
             children: [
-                ['/multiboot/bootstrap', 'Setting up Bootstrap.efi'],
-                ['/multiboot/bootcamp', 'Installing BootCamp'],
+                ['/multiboot/bootstrap', 'Configurar Bootstrap.efi'],
+                ['/multiboot/bootcamp', 'Instalar BootCamp'],
             ]
         },
         {
-            title: 'Miscellaneous',
+            title: 'Misceláneo',
             collapsable: false,
             children: [
-                ['/misc/rtc', 'Fixing RTC'],
-                ['/misc/msr-lock', 'Fixing CFG Lock'],
-                ['/misc/nvram', 'Emulated NVRAM'],
+                ['/misc/rtc', 'Arreglar RTC'],
+                ['/misc/msr-lock', 'Arreglar CFG Lock'],
+                ['/misc/nvram', 'NVRAM Emulada'],
             ]
         },
 
