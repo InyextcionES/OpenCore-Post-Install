@@ -1,32 +1,32 @@
-# Arreglar compatibilidad con DRM y iGPU performance
+# Arreglar compatibilidad con DRM y el rendimiento de tu iGPU
 
 
 
 
 
-So with DRM, we have a couple things we need to mention:
+Respecto al DRM, hay algunas cosas que tenemos que mencionar:
 
-* DRM requiere una dGPU compatible
-  * Refiérete a la [GPU Buyers Guide](https://dortania.github.io/GPU-Buyers-Guide/) para las placas compatibles
-* DRM está rota para sitemas que solo tienen iGPU
-  * Antes se podía arreglar esto con Shiki (ahora WhateverGreen) hasta 10.12.2, pero se rompió esto en 10.12.3
-  * This is due to the issue that our iGPUs don't support Apple's firmware and that our [Management Engine](https://en.wikipedia.org/wiki/Intel_Management_Engine) doesn't have Apple's certificate
-* Working hardware acceleration and decoding
+* El DRM requiere de una dGPU compatible
+  * Refiérete a la [Guía de compradores de GPU](https://dortania.github.io/GPU-Buyers-Guide/) para ver las tarjetas compatibles
+* El DRM está roto para sitemas que solo tienen iGPU
+  * Antes esto podía arreglar con Shiki (ahora WhateverGreen) hasta 10.12.2, pero se rompió en 10.12.3
+  * Esto es debido a que nuestras iGPUs no soportan el firmware de Apple y que nuestro [Management Engine](https://www.intel.es/content/www/es/es/support/articles/000008927/software/chipset-software.html) no tiene el certificado de Apple.
+* Necesitas aceleración de hardware y decoding funcional
 
-## Testing Hardware Acceleration and Decoding
+## Probando aceleración de hardware y decoding
 
-So before we can get started with fixing DRM, we need to make sure your hardware is working. The best way to check is by running [VDADecoderChecker](https://i.applelife.ru/2019/05/451893_10.12_VDADecoderChecker.zip):
+Antes de que podamos comenzar a arreglar el DRM, necesitamos verificar que tenemos aceleración de hardware. La mejor manera de hacer esto es corriendo [VDADecoderChecker](https://i.applelife.ru/2019/05/451893_10.12_VDADecoderChecker.zip):
 
 ![](../images/post-install/drm-md/vda.png)
 
-If you fail at this point, there's a couple things you can check for:
+Si falla en este punto hay algunas cosas que puedes verificar:
 
-* Make sure your hardware is supported
-  * See [GPU Buyers Guide](https://dortania.github.io/GPU-Buyers-Guide/)
-* Make sure the SMBIOS you're running matches with your hardware
-  * Don't use a Mac Mini SMBIOS on a desktop for example, as Mac Minis run mobile hardware and so macOS will expect the same
-* Make sure the iGPU is enabled in the BIOS and has the correct properties for your setup (`AAPL,ig-platform-id` and if needed, `device-id`)
-  * You can either review the DeviceProperties section from the guide or [WhateverGreen's manual](https://github.com/acidanthera/WhateverGreen/blob/master/Manual/FAQ.IntelHD.en.md)
+* Asegúrate que tu hardware es soportado
+  * Vé a la [guía de compradores de GPUs](https://dortania.github.io/GPU-Buyers-Guide/)
+* Asegúrate de que tu SMBIOS se adecúa a tu hardware
+  * No uses un SMBIOS de Mac Mini en una computadora de escritorio, por ejemplo, ya que las Mac Minis corren en hardware móvil, por lo que macOS esperará lo mismo. 
+* Asegúrate de que tu iGPU está habilitada en tu BIOS y que tiene las propiedades correctas para tu hardware (`AAPL,ig-platform-id` y, si lo necesitas, `device-id`)
+  * Puedes verificar ambas en la sección DeviceProperties de la guía o desde el [Manual de WhateverGreen](https://github.com/acidanthera/WhateverGreen/blob/master/Manual/FAQ.IntelHD.en.md)
 * Avoid unnecessary ACPI renames, all important ones are handled in WhateverGreen
   * change GFX0 to IGPU
   * change PEG0 to GFX0
