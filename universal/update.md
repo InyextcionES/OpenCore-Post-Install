@@ -51,7 +51,7 @@ El proceso que seguir es así:
   * [OCConfigCompare](https://github.com/corpnewt/OCConfigCompare) para comparar la sample.plist y tu config.plist
   * `diff (file input 1) (file input 2)` en terminal
   * [BeyondCompare](https://www.scootersoftware.com)
-  * Hacer una config nueva basada en seguir OpenCore Vanilla Guide actualizada
+  * Make a new config based off reading the updated OpenCore Install Guide
 
 * Once you've made the adjustments and made sure you config is compliant with the newest release of OpenCore, make sure to double check your setting with the OpenCore Guide on what to set everything to, otherwise read the [Differences.pdf](https://github.com/acidanthera/OpenCorePkg/blob/master/Docs/Differences/Differences.pdf) if you want to get a bit more technical.
 
