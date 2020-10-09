@@ -43,5 +43,6 @@ Ahora estamos listos para correr `sign.command`:
 
 If you're doing heavy troubleshooting o si tengas que desactivar Vault, las cosas principales que cambiar:
 
-* Descarga una copia nueva de OpenCore.efi
-* `Misc -> Security -> Vault` a Optional
+* Grab a new copy of OpenCore.efi
+* `Misc -> Security -> Vault` set to Optional
+* Remove `vault.plist` and `vault.sig`

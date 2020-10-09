@@ -57,6 +57,64 @@ Actualmente estas siguintes opciones son compatibles para `Misc -> Security -> S
 * Sistemas operativos lanzado antes de Apple Secure Boot (ie. macOS 10.12 o anteriorer) todavía arrancará hasta que el UEFI Secure Boot sea activado. Esto es para que, 
   * Esto es porque Apple Secure Boot supone que el SO es incompatible y así el firmware le tratará como si fuese Microsoft Windows
 
+::: details Troubleshooting
+
+Due to an annoying bug on Apple's end, certain systems may be missing the secure boot files themselves on the drive. Because of this, you may get issues such as:
+
+```
+OCB: LoadImage failed - Security Violation
+```
+
+To resolve, run the following in macOS:
+
+```bash
+# First, find your Preboot volume
+diskutil list
+
+# From the below list, we can see our Preboot volume is disk5s2
+/dev/disk5 (synthesized):
+   #:                       TYPE NAME                    SIZE       IDENTIFIER
+   0:      APFS Container Scheme -                      +255.7 GB   disk5
+                                 Physical Store disk4s2
+   1:                APFS Volume ⁨Big Sur HD - Data⁩       122.5 GB   disk5s1
+   2:                APFS Volume ⁨Preboot⁩                 309.4 MB   disk5s2
+   3:                APFS Volume ⁨Recovery⁩                887.8 MB   disk5s3
+   4:                APFS Volume ⁨VM⁩                      1.1 MB     disk5s4
+   5:                APFS Volume ⁨Big Sur HD⁩              16.2 GB    disk5s5
+   6:              APFS Snapshot ⁨com.apple.os.update-...⁩ 16.2 GB    disk5s5s
+
+# Now mount the Preboot volume
+diskutil mount disk5s2
+
+# CD into your Preboot volume
+# Note the actual volume is under /System/Volumes/Preboot
+cd /System/Volumes/Preboot
+
+# Grab your UUID
+ls 
+	46923F6E-968E-46E9-AC6D-9E6141DF52FD 
+	CD844C38-1A25-48D5-9388-5D62AA46CFB8
+    
+# If multiple show up(ie. you dual boot multiple versions of macOS), you will
+# need to determine which UUID is correct.
+# Easiest way to determine is printing the value of .disk_label.contentDetails
+# of each volume.
+cat ./46923F6E-968E-46E9-AC6D-9E6141DF52FD/System/Library/CoreServices/.disk_label.contentDetails
+	Big Sur HD%
+
+cat ./CD844C38-1A25-48D5-9388-5D62AA46CFB8/System/Library/CoreServices/.disk_label.contentDetails
+	Catalina HD%
+
+# Next lets copy over the secure boot files
+# Replace CD844C38-1A25-48D5-9388-5D62AA46CFB8 with your UUID value
+cd ~
+sudo cp -a /usr/standalone/i386/. /System/Volumes/Preboot/CD844C38-1A25-48D5-9388-5D62AA46CFB8/System/Library/CoreServices
+```
+
+Now you can enable SecureBootModel and reboot without issue! And since we're not editing the system volume itself we don't need to worry about disabling SIP or breaking macOS snapshots.
+
+:::
+
 ## ApECID
 
 ApECID es usado como Apple Enclave Identifier, y lo qué significa es que nos deja usar nuestros Apple Secure Boot identifiers personalizados y conseguir ["Full Security"](https://support.apple.com/HT208330) as per Apple's secure boot page(cuando se usa con SecureBootModel).

@@ -81,9 +81,9 @@ Para empezar, necesitamos unas cosas:
     * p.ej.: `PciRoot(0x0)/Pci(0x1f,0x3)`
 
 * **AudioOut:**
-  * La salida específica de tu controller de audio, la manera más fácil de encontrar la salida correcta es probarlas una a una(de 0 a N - 1)
-  * p.ej.: `2`
-    * Es posible encontrar todas las salidas de tu codec en los debug logs de OpenCore:
+  * The specific output of your Audio controller, easiest way to find the right one is to go through each one(from 0 to N - 1, where N is the number of outputs listed in your log)
+  * ex: 5 outputs would translate to 0-4 as possible values
+    * You can find all the ones for your codec in the OpenCore debug logs:
 
 ```
 06:065 00:004 OCAU: Matching PciRoot(0x0)/Pci(0x1F,0x3)/VenMsg(A9003FEB-D806-41DB-A491-5405FEEF46C3,00000000)...
